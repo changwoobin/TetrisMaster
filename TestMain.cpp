@@ -8,7 +8,7 @@ int main(void) {
 	srand((unsigned)time(NULL));
 
 	TetrisGame game;
-	game.setGame(9);
+	game.setGame(1);
 	game.play();
 
 	return 0;

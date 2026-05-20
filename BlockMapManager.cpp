@@ -57,8 +57,8 @@ bool BlockMapManager::canPlace() {
 			if (curBlockX + j == 0 || curBlockX + j == 13) {
 				isBlocked = true;
 			}
-			else if (curBlockY+i >= 0 && curBlockX+j >= 0) {
-				isBlocked = (map(curBlockX, curBlockY) == 1) ? true : false;
+			else if (curBlockY + i >= 0 && curBlockX + j >= 0) {
+				isBlocked = (map(curBlockX+j, curBlockY+i) == 1) ? true : false;
 			}
 
 			if (isBlocked && Block::blocks[curBlockShape][curBlockAngle][i][j] == 1) {
@@ -84,39 +84,38 @@ int BlockMapManager::checkFullLine() {
 		}
 
 		if (j == 13) {
-			curLines++;
-		}
-
-		map.draw(gameState.getLevel());
-
-		changeColor(BLUE);
-		moveCursor(1 * 2 + abx, i + aby);
-		for (int j = 1; j < 13; j++) {
-			cout << "бр";
-			Sleep(10);
-		}
-
-		moveCursor(1 * 2 + abx, i + aby);
-		for (int j = 1; j < 13; j++) {
-			cout << setw(2);
-			Sleep(10);
-		}
-
-		for (int k = i; k > 0; k--) {
+			curLines++;		
+			
+			map.draw(gameState.getLevel());
+			changeColor(BLUE);
+			moveCursor(1 * 2 + abx, i + aby);
 			for (int j = 1; j < 13; j++) {
-				map.setMap(k, j, map(j, k - 1));
+				cout << "бр ";
+				Sleep(10);
 			}
-		}
 
-		for (int j = 1; j < 13; j++) {
-			map.setMap(0, j, 0);
-		}
+			moveCursor(1 * 2 + abx, i + aby);
+			for (int j = 1; j < 13; j++) {
+				cout << "  ";
+				Sleep(10);
+			}
 
-		curScore += 100 + (gameState.getLevel() * 10) + (rand() % 10);
-		
-		gameState.setScore(curScore);
-		gameState.setLines(curLines);
-		gameState.show();
+			for (int k = i; k > 0; k--) {
+				for (int j = 1; j < 13; j++) {
+					map.setMap(k, j, map(j, k - 1));
+				}
+			}
+
+			for (int j = 1; j < 13; j++) {
+				map.setMap(0, j, 0);
+			}
+
+			curScore += 100 + (gameState.getLevel() * 10) + (rand() % 10);
+
+			gameState.setScore(curScore);
+			gameState.setLines(curLines);
+			gameState.show();
+		}
 	}
 
 	return 0;
@@ -131,12 +130,13 @@ int BlockMapManager::mergeBlock() {
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			map.setMap(curBlockX + i, curBlockY + j, Block::blocks[curBlockShape][curBlockAngle][i][j]);
+			map.setMap(curBlockY + i, curBlockX + j, Block::blocks[curBlockShape][curBlockAngle][i][j] | map(curBlockX + j, curBlockY + i));
 		}
 	}
 
+	checkFullLine();
+	showMap();
 	return 0;
-
 }
 
 int BlockMapManager::moveBlock() {
@@ -144,7 +144,7 @@ int BlockMapManager::moveBlock() {
 
 	blocks[curBlock].moveDown();
 	if (!canPlace()) {
-		if (blocks[curBlock].getY() < 0) {
+		if (blocks[curBlock].getY() <= 0) {
 			blocks[curBlock].moveUp();
 			return 1;
 		}
@@ -157,6 +157,7 @@ int BlockMapManager::moveBlock() {
 		showNextBlock();
 		return 2;
 	}
+
 	return 0;
 }
 

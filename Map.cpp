@@ -21,10 +21,10 @@ Map::Map() {
 void Map::draw(int level) {
     for (int i = 0; i < 21; i++) {
         for (int j = 0; j < 14; j++) {
-
             if (j == 0 || j == 13 || i == 20) {
                 changeColor((level % 6) + 1);   // 원본의 레벨별 테두리 색
             }
+
             else {
                 changeColor(DARK_GRAY);         // 원본의 내부 칸 색
             }

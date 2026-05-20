@@ -12,6 +12,7 @@ x64/
 .vs/
 *.sln
 *.vcxproj
+*.vcxproj.filters
 *.user
 *.suo
 *.db

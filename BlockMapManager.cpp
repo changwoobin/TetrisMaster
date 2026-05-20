@@ -157,6 +157,7 @@ int BlockMapManager::moveBlock() {
 		showNextBlock();
 		return 2;
 	}
+	return 0;
 }
 
 void BlockMapManager::showCurBlock()
@@ -196,15 +197,15 @@ void BlockMapManager::currentBlockRotate()
 
 }
 
-int BlockMapManager::canRotate()
+bool BlockMapManager::canRotate()
 {
-	int rv;
+	bool rv;
 	blocks[curBlock].rotate();
 	rv = canPlace();
 	blocks[curBlock].rotate();
 	blocks[curBlock].rotate();
 	blocks[curBlock].rotate();
-	return !rv;
+	return rv;
 }
 
 int BlockMapManager::getCurBlockX() const
@@ -216,7 +217,7 @@ void BlockMapManager::moveRight()
 {
 	blocks[curBlock].erase();
 	blocks[curBlock].moveRight();
-	if (canPlace() == 1) {
+	if (!canPlace()) {
 		blocks[curBlock].moveLeft();
 	}
 	blocks[curBlock].show();
@@ -226,7 +227,7 @@ void BlockMapManager::moveLeft()
 {
 	blocks[curBlock].erase();
 	blocks[curBlock].moveLeft();
-	if (canPlace() == 1) {
+	if (!canPlace()) {
 		blocks[curBlock].moveRight();
 	}
 	blocks[curBlock].show();

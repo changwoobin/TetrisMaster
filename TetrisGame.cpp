@@ -28,7 +28,7 @@ int TetrisGame::play()
 				{
 				case KEY_UP:		//회전하기
 					
-					if (manager.canRotate() == 1)
+					if (manager.canRotate())
 					{
 						manager.currentBlockRotate();
 					}
@@ -56,7 +56,7 @@ int TetrisGame::play()
 			{
 				while (is_gameover == 0)
 				{
-					is_gameover = manager.canPlace();
+					is_gameover = manager.moveBlock();
 				}
 				manager.showCurBlock();
 			}

@@ -29,7 +29,7 @@ public:
 	void showCurBlock();
 	void showNextBlock();
 	void currentBlockRotate();
-	int canRotate();
+	bool canRotate();
 	int getCurBlockX() const;
 	void moveRight();
 	void moveLeft();

@@ -109,11 +109,11 @@ void Block::moveUp() {
 }
 
 void Block::moveLeft() {
-    x++;
+    x--;
 }
 
 void Block::moveRight() {
-    x--;
+    x++;
 }
 
 void Block::setCord(int x, int y) {

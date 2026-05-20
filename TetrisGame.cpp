@@ -15,7 +15,7 @@ int TetrisGame::play()
 	manager.showMap();
 	manager.showNextBlock();
 	manager.startBlock();
-	manager.getGameState().show();
+	manager.getGameState().show(); 
 	for (i = 1; 1; i++)
 	{	
 		if (_kbhit())
@@ -81,7 +81,20 @@ int TetrisGame::play()
 		{
 			return 1;
 		}
+		gotoxy(77, 23);
 		Sleep(15);
+		gotoxy(77, 23);
 	}
 	return 0;
+}
+
+void TetrisGame::gotoxy(int x, int y)
+{
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	COORD pos;
+	pos.X = x;
+	pos.Y = y;
+
+	SetConsoleCursorPosition(hConsole, pos);
 }

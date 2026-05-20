@@ -17,5 +17,6 @@ public:
  	TetrisGame() = default;
 	void setGame(int level);
 	int play();
+	void gotoxy(int x, int y);
 };
 

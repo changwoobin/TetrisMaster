@@ -20,7 +20,7 @@ int BlockMapManager::addBlock() {
 	else {
 		shape = (rand() % 6) + 1;
 	}
-
+	 
 	Block newBlock(shape);
 	blocks.push_back(newBlock);
 
@@ -40,6 +40,11 @@ int BlockMapManager::startBlock() {
 	return 0;
 }
 
+GameState& BlockMapManager::getGameState()
+{
+	return gameState;
+}
+
 bool BlockMapManager::canPlace() {
 	int curBlockX = blocks[curBlock].getX();
 	int curBlockY = blocks[curBlock].getY();
@@ -57,15 +62,16 @@ bool BlockMapManager::canPlace() {
 			}
 
 			if (isBlocked && Block::blocks[curBlockShape][curBlockAngle][i][j] == 1) {
-				return true;
+				return false;
 			}
 		}
 	}
 
-	return false;
+	return true;
 }
 
 int BlockMapManager::checkFullLine() {
+	int l = 0;
 	for (int i = 0; i < 20; i++) {
 		int curLines = gameState.getLines();
 		int curScore = gameState.getScore();
@@ -153,6 +159,11 @@ int BlockMapManager::moveBlock() {
 	}
 }
 
+void BlockMapManager::showCurBlock()
+{
+	blocks[curBlock].show();
+}
+
 void BlockMapManager::showNextBlock() {
 	int nextBlock = curBlock + 1;
 	
@@ -175,4 +186,48 @@ void BlockMapManager::showNextBlock() {
 
 	blocks[nextBlock].setCord(15,1);
 	blocks[nextBlock].show();
+}
+
+void BlockMapManager::currentBlockRotate()
+{
+	blocks[curBlock].erase();
+	blocks[curBlock].rotate();
+	blocks[curBlock].show();
+
+}
+
+int BlockMapManager::canRotate()
+{
+	int rv;
+	blocks[curBlock].rotate();
+	rv = canPlace();
+	blocks[curBlock].rotate();
+	blocks[curBlock].rotate();
+	blocks[curBlock].rotate();
+	return !rv;
+}
+
+int BlockMapManager::getCurBlockX() const
+{
+	return blocks[curBlock].getX();
+}
+
+void BlockMapManager::moveRight()
+{
+	blocks[curBlock].erase();
+	blocks[curBlock].moveRight();
+	if (canPlace() == 1) {
+		blocks[curBlock].moveLeft();
+	}
+	blocks[curBlock].show();
+}
+
+void BlockMapManager::moveLeft()
+{
+	blocks[curBlock].erase();
+	blocks[curBlock].moveLeft();
+	if (canPlace() == 1) {
+		blocks[curBlock].moveRight();
+	}
+	blocks[curBlock].show();
 }

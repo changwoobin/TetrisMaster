@@ -21,10 +21,17 @@ public:
 	int addBlock();			// blocks 벡터에 block 추가
 	int startBlock();		// block 진행 시작
 
+	GameState& getGameState();
 	bool canPlace();		// 블록을 놓을 수 있으면 true 반환(strike_check)
 	int checkFullLine();	
 	int mergeBlock();		
 	int moveBlock();
+	void showCurBlock();
 	void showNextBlock();
+	void currentBlockRotate();
+	int canRotate();
+	int getCurBlockX() const;
+	void moveRight();
+	void moveLeft();
 };
 

@@ -16,3 +16,4 @@ x64/
 *.suo
 *.db
 *.opendb
+tetris.cpp

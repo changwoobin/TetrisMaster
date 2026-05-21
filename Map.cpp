@@ -1,6 +1,5 @@
 #include "Map.h"
 
-// 생성자로 절대 좌표 설정
 Map::Map(int abx, int aby) : Object(abx, aby) {
     for (int i = 0; i < 20; i++) {
         for (int j = 0; j < 14; j++) {
@@ -28,7 +27,6 @@ void Map::draw(int level) {
                 changeColor(DARK_GRAY);
             }
 
-            // 하드코딩 제거 후 절대 좌표 기준 수식 적용
             moveCursor((j * 2) + abx, i + aby);
 
             if (totalBlock[i][j] == 1) {

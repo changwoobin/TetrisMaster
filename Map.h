@@ -9,7 +9,6 @@ private:
     int totalBlock[21][14];
 
 public:
-    // 맵도 절대 좌표를 받을 수 있도록 수정
     Map(int abx = 5, int aby = 1);
 
     void draw(int level);

@@ -21,7 +21,6 @@ int GameState::show() {
 	changeColor(GRAY);
 
 	if (!isTextPrinted) {
-		// 하드코딩된 좌표를 절대 좌표(abx, aby) 기준으로 오프셋 처리
 		moveCursor(abx, aby);
 		cout << "STAGE";
 

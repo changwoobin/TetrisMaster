@@ -21,7 +21,6 @@ int BlockMapManager::addBlock() {
 		shape = (rand() % 6) + 1;
 	}
 
-	// 생성되는 블록에 현재 보드의 절대 좌표 주입
 	Block newBlock(shape, abx, aby);
 	blocks.push_back(newBlock);
 
@@ -35,7 +34,6 @@ int BlockMapManager::startBlock() {
 
 	curBlock++;
 
-	// 본 게임 보드로 진입하므로, 절대 좌표 기준을 게임판(abx, aby)으로 리셋
 	blocks[curBlock].setOffset(abx, aby);
 	blocks[curBlock].setCord(5, -4);
 	blocks[curBlock].show();
@@ -176,13 +174,11 @@ void BlockMapManager::showNextBlock() {
 		addBlock();
 	}
 
-	// Next Box의 독립적인 절대 좌표
 	int nextBoxX = 33;
 	int nextBoxY = 1;
 
 	changeColor((gameState.getLevel() + 1) % 6 + 1);
 	for (int i = 1; i < 7; i++) {
-		// 하드코딩 대신 설정한 좌표 기준으로 박스 출력
 		moveCursor(nextBoxX, nextBoxY + i - 1);
 		for (int j = 0; j < 6; j++) {
 			if (i == 1 || i == 6 || j == 0 || j == 5) {
@@ -194,9 +190,7 @@ void BlockMapManager::showNextBlock() {
 		}
 	}
 
-	// 넥스트 블록의 절대 좌표 기준점을 Next Box 내부로 일시 변경
 	blocks[nextBlock].setOffset(nextBoxX + 2, nextBoxY + 1);
-	// 변경된 기준점(Next Box 내부)에서의 상대 좌표 설정
 	blocks[nextBlock].setCord(0, 0);
 	blocks[nextBlock].show();
 }

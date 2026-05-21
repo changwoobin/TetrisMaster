@@ -23,8 +23,8 @@ const int Block::blocks[7][4][4][4] = {
     0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,	0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0
 };
 
-Block::Block(int shape) 
-    : shape(shape), x(15), y(1), angle(0)
+Block::Block(int shape, int abx, int aby)
+    : Object(abx, aby), shape(shape), x(15), y(1), angle(0)
 {
 }
 
@@ -57,18 +57,14 @@ void Block::show() {
                 continue;
 
             if (blocks[shape][angle][j][i] == 1) {
-                // 원본 좌표식:
-                // gotoxy((i+x)*2+ab_x, j+y+ab_y)
-                // ab_x = 5, ab_y = 1
+                // Object의 절대좌표(abx, aby) 사용
                 moveCursor((i + x) * 2 + abx, j + y + aby);
                 cout << "■";
             }
         }
     }
-
     moveCursor(77, 23);
 }
-
 
 void Block::erase() {
     for (int i = 0; i < 4; i++) {
@@ -77,7 +73,7 @@ void Block::erase() {
                 if (y + j < 0)
                     continue;
 
-                moveCursor((i + x) * 2 + 5/*ab_x*/, j + y + 1/*ab_y*/);
+                moveCursor((i + x) * 2 + abx, j + y + aby);
                 cout << "  ";
             }
         }

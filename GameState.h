@@ -12,7 +12,8 @@ class GameState : public Object
 	bool isTextPrinted;
 public:
 	GameState();
-	GameState(int level, int score, int lines);
+	// 절대 좌표(abx, aby)를 받을 수 있도록 생성자 수정
+	GameState(int level, int score, int lines, int abx = 35, int aby = 7);
 
 	int getScore() const;
 	int getLines() const;
@@ -24,4 +25,3 @@ public:
 
 	int show();
 };
-

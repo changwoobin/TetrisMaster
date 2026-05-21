@@ -14,10 +14,9 @@ class BlockMapManager : public Object
 	Map map;
 	int curBlock;					// 현재	진행 중인 블록의 인덱스
 public:
-	BlockMapManager();
+	BlockMapManager(int abx = 5, int aby = 1);
 
 	void showMap();
-
 	int addBlock();			// blocks 벡터에 block 추가
 	int startBlock();		// block 진행 시작
 

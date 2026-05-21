@@ -1,6 +1,7 @@
 #include "Map.h"
 
-Map::Map() {
+// 생성자로 절대 좌표 설정
+Map::Map(int abx, int aby) : Object(abx, aby) {
     for (int i = 0; i < 20; i++) {
         for (int j = 0; j < 14; j++) {
             if (j == 0 || j == 13) {
@@ -17,19 +18,18 @@ Map::Map() {
     }
 }
 
-
 void Map::draw(int level) {
     for (int i = 0; i < 21; i++) {
         for (int j = 0; j < 14; j++) {
             if (j == 0 || j == 13 || i == 20) {
-                changeColor((level % 6) + 1);   // 원본의 레벨별 테두리 색
+                changeColor((level % 6) + 1);
             }
-
             else {
-                changeColor(DARK_GRAY);         // 원본의 내부 칸 색
+                changeColor(DARK_GRAY);
             }
 
-            moveCursor((j * 2) + 5/*ab_x*/, i + 1/*ab_y*/);
+            // 하드코딩 제거 후 절대 좌표 기준 수식 적용
+            moveCursor((j * 2) + abx, i + aby);
 
             if (totalBlock[i][j] == 1) {
                 cout << "■";
@@ -39,7 +39,6 @@ void Map::draw(int level) {
             }
         }
     }
-
     moveCursor(77, 23);
 }
 

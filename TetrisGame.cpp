@@ -20,6 +20,9 @@ int TetrisGame::play()
 	{	
 		if (_kbhit())
 		{
+			manager.changeColor(BLACK);
+			gotoxy(77, 23);
+
 			keytemp = _getche();
 			if (keytemp == EXT_KEY)
 			{
@@ -48,7 +51,7 @@ int TetrisGame::play()
 					break;
 				case KEY_DOWN:		//아래로 이동
 					is_gameover = manager.moveBlock();
-					manager.showMap();
+					manager.showCurBlock();
 					break;
 				}
 			}
@@ -81,9 +84,10 @@ int TetrisGame::play()
 		{
 			return 1;
 		}
+
+		manager.changeColor(BLACK);
 		gotoxy(77, 23);
 		Sleep(15);
-		gotoxy(77, 23);
 	}
 	return 0;
 }

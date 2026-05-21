@@ -9,11 +9,11 @@ private:
     int totalBlock[21][14];
 
 public:
-    Map();
+    // 맵도 절대 좌표를 받을 수 있도록 수정
+    Map(int abx = 5, int aby = 1);
 
-    // 원본 show_total_block()
-    void draw(int level); // level에 따라 테두리 색을 바꾸어서 level을 인자로 받음
+    void draw(int level);
     void setMap(int row, int col, int data);
-    
+
     int operator()(int x, int y);
 };

@@ -3,18 +3,17 @@
 
 class Object {
 protected:
-    // 원본 init()에서 사용한 화면 기준점
-    // ab_x = 5, ab_y = 1;
+    // 절대 좌표 기준점
     int abx;
     int aby;
 
 public:
-    Object();
+    // 생성자에서 절대 좌표를 받을 수 있도록 기본값과 함께 추가
+    Object(int x = 5, int y = 1);
 
-    // 원본 gotoxy(int x, int y)
+    // 런타임에 절대 좌표 기준을 변경할 수 있는 함수
+    void setOffset(int x, int y);
+
     void moveCursor(int x, int y);
-
-    // 원본 SetColor(int color)
     void changeColor(int color);
 };
-

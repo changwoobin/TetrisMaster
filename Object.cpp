@@ -1,8 +1,13 @@
 #include "Object.h"
 
-Object::Object() {
-    abx = 5;
-    aby = 1;
+// 생성자에 절대 좌표 반영
+Object::Object(int x, int y) : abx(x), aby(y) {
+}
+
+// 절대 좌표 기준 변경
+void Object::setOffset(int x, int y) {
+    abx = x;
+    aby = y;
 }
 
 void Object::moveCursor(int x, int y) {

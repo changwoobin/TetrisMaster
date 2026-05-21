@@ -1,8 +1,8 @@
 #include "BlockMapManager.h"
 
 
-BlockMapManager::BlockMapManager() : curBlock(-1) {
-
+BlockMapManager::BlockMapManager(int abx, int aby)
+	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, 35, 7) {
 }
 
 void BlockMapManager::showMap() {
@@ -13,15 +13,16 @@ void BlockMapManager::showMap() {
 int BlockMapManager::addBlock() {
 	int shape;
 	int stickProb = rand() % 100;
-	
+
 	if (stickProb <= Stage::data[gameState.getLevel()].stickRate) {
 		shape = 0;
 	}
 	else {
 		shape = (rand() % 6) + 1;
 	}
-	 
-	Block newBlock(shape);
+
+	// 생성되는 블록에 현재 보드의 절대 좌표 주입
+	Block newBlock(shape, abx, aby);
 	blocks.push_back(newBlock);
 
 	return 0;
@@ -31,10 +32,12 @@ int BlockMapManager::startBlock() {
 	if (blocks.size() == 0) {
 		addBlock();
 	}
-	
+
 	curBlock++;
 
-	blocks[curBlock].setCord(5, -4);    
+	// 본 게임 보드로 진입하므로, 절대 좌표 기준을 게임판(abx, aby)으로 리셋
+	blocks[curBlock].setOffset(abx, aby);
+	blocks[curBlock].setCord(5, -4);
 	blocks[curBlock].show();
 
 	return 0;
@@ -168,14 +171,19 @@ void BlockMapManager::showCurBlock()
 
 void BlockMapManager::showNextBlock() {
 	int nextBlock = curBlock + 1;
-	
+
 	if (blocks.size() == nextBlock) {
 		addBlock();
 	}
 
+	// Next Box의 독립적인 절대 좌표
+	int nextBoxX = 33;
+	int nextBoxY = 1;
+
 	changeColor((gameState.getLevel() + 1) % 6 + 1);
 	for (int i = 1; i < 7; i++) {
-		moveCursor(33, i);
+		// 하드코딩 대신 설정한 좌표 기준으로 박스 출력
+		moveCursor(nextBoxX, nextBoxY + i - 1);
 		for (int j = 0; j < 6; j++) {
 			if (i == 1 || i == 6 || j == 0 || j == 5) {
 				cout << "■ ";
@@ -186,7 +194,10 @@ void BlockMapManager::showNextBlock() {
 		}
 	}
 
-	blocks[nextBlock].setCord(15,1);
+	// 넥스트 블록의 절대 좌표 기준점을 Next Box 내부로 일시 변경
+	blocks[nextBlock].setOffset(nextBoxX + 2, nextBoxY + 1);
+	// 변경된 기준점(Next Box 내부)에서의 상대 좌표 설정
+	blocks[nextBlock].setCord(0, 0);
 	blocks[nextBlock].show();
 }
 

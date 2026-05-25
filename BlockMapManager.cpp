@@ -3,7 +3,7 @@
 
 BlockMapManager::BlockMapManager(int abx, int aby)
 	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, abx + 30, aby + 8),
-	holdShape(-1), remainHolds(5) {
+	holdShape(-1), remainHolds(3) {
 }
 
 void BlockMapManager::showMap() {
@@ -246,7 +246,7 @@ void BlockMapManager::addHolds(int count) {
 }
 
 void BlockMapManager::showHoldBox() {
-	int holdBoxX = abx + 43; //hold 박스 위치 조정
+	int holdBoxX = abx + 43; // hold 박스 위치 조정
 	int holdBoxY = aby;
 
 	changeColor(GRAY);

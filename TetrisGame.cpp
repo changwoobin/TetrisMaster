@@ -112,9 +112,11 @@ int TetrisGame::play()
 			level++;
 			manager.getGameState().setLevel(level);
 			manager.getGameState().setLines(0);
+			manager.addHolds(1);
 			manager.showMap();
 			manager.getGameState().show();
 			manager.showNextBlock();
+			manager.showHoldBox();
 		}
 		if (is_gameover == 1)
 		{

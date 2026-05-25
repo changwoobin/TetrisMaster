@@ -17,89 +17,86 @@ int TetrisGame::play()
 	manager.showHoldBox();
 	manager.startBlock();
 	manager.getGameState().show(); 
+	bool prev_UP = false;
+	bool prev_C = false;
 	for (i = 1; 1; i++)
 	{	
-		if (_kbhit())
+		manager.changeColor(BLACK);
+		gotoxy(77, 23);
+
+		
+
+		/*keytemp = _getche();*/
+		/*keytemp = _getche();*/
+
+		if ((GetAsyncKeyState(VK_UP) & 0x8000) && !prev_UP) // 회전하기
 		{
-			manager.changeColor(BLACK);
-			gotoxy(77, 23);
-
-			keytemp = _getche();
-			if (keytemp == EXT_KEY)
+			if (manager.canRotate())
 			{
-				keytemp = _getche();
-				switch (keytemp)
-				{
-				case KEY_UP:		//회전하기
-					
-					if (manager.canRotate())
-					{
-						manager.currentBlockRotate();
-					}
-					break;
-				case KEY_LEFT:		//왼쪽으로 이동
-					if (manager.getCurBlockX() > 1)
-					{
-						manager.moveLeft();
-					}
-					break;
-				case KEY_RIGHT:		//오른쪽으로 이동
+				manager.currentBlockRotate();
+			}
+		}
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000) // 왼쪽으로 이동
+		{
+			if (manager.getCurBlockX() > 1)
+			{
+				manager.moveLeft();
+			}
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000) // 오른쪽으로 이동
+		{
+			if (manager.getCurBlockX() < 13)
+			{
+				manager.moveRight();
+			}
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000) // 아래로 이동
+		{
+			is_gameover = manager.moveBlock();
+			manager.showCurBlock();
+		}
+		if (GetAsyncKeyState(KEY_SPACE) & 0x8000) // 스페이스바 (Hard Drop)
+		{
+			while (is_gameover == 0)
+			{
+				is_gameover = manager.moveBlock();
+			}
+			manager.showCurBlock();
+		}
+		else if ((GetAsyncKeyState('C') & 0x8000) && !prev_C) // 블록 홀드
+		{
+			manager.holdCurrentBlock();
+		}
+		if ((GetAsyncKeyState(27) & 0x8000) || (GetAsyncKeyState('P') & 0x8000)) // ESC 또는 P (일시정지)
+		{
+			manager.changeColor(WHITE);
+			gotoxy(10, 10); std::cout << " ┌───────────────────┐ ";
+			gotoxy(10, 11); std::cout << " │      P A U S E     │ ";
+			gotoxy(10, 12); std::cout << " │ [R]esume  [Q]uit  │ ";
+			gotoxy(10, 13); std::cout << " └───────────────────┘ ";
+			
+			Sleep(200);
 
-					if (manager.getCurBlockX() < 13)
-					{
-						manager.moveRight();
-					}
-					break;
-				case KEY_DOWN:		//아래로 이동
-					is_gameover = manager.moveBlock();
-					manager.showCurBlock();
+			while (true) {
+				bool is_R_Pressed = (GetAsyncKeyState('R') & 0x8000) != 0;
+				bool is_Q_Pressed = (GetAsyncKeyState('Q') & 0x8000) != 0;
+				bool is_ESC_Pressed = (GetAsyncKeyState(27) & 0x8000) != 0;
+
+				if (is_R_Pressed || is_ESC_Pressed) {
 					break;
 				}
-			}
-			else
-			{
-				switch (keytemp)
-				{
-				case 32:
-					while (is_gameover == 0)
-					{
-						is_gameover = manager.moveBlock();
-					}
-					manager.showCurBlock();
-					break;
-
-				case 'c': case 'C':
-					manager.holdCurrentBlock();
-					break;
-
-				case 27:
-				case 'p': case 'P':
-					manager.changeColor(WHITE);
-					gotoxy(10, 10); std::cout << " ┌───────────────────┐ ";
-					gotoxy(10, 11); std::cout << " │     P A U S E     │ ";
-					gotoxy(10, 12); std::cout << " │ [R]esume  [Q]uit  │ ";
-					gotoxy(10, 13); std::cout << " └───────────────────┘ ";
-
-					while (true) {
-						if (_kbhit()) {
-							char pauseKey = _getch();
-
-							if (pauseKey == 'r' || pauseKey == 'R' || pauseKey == 27) {
-								break;
-							}
-							else if (pauseKey == 'q' || pauseKey == 'Q') {
-								return 0;
-							}
-						}
-						Sleep(50);
-					}
-
-					manager.showMap();
-					manager.showHoldBox();
-					manager.showCurBlock();
-					break;
+				else if (is_Q_Pressed) {
+					return 0; 
 				}
+				
+				Sleep(30);
 			}
+
+			Sleep(200);
+
+			manager.showMap();
+			manager.showHoldBox();
+			manager.showCurBlock();
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
@@ -124,8 +121,11 @@ int TetrisGame::play()
 		}
 
 		manager.changeColor(BLACK);
+		prev_UP = (GetAsyncKeyState(VK_UP) & 0x8000);
+		prev_C = (GetAsyncKeyState('C') & 0x8000);
 		gotoxy(77, 23);
-		Sleep(15);
+		Sleep(30);
+		gotoxy(77, 23);
 	}
 	return 0;
 }

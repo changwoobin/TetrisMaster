@@ -14,6 +14,7 @@ int TetrisGame::play()
 	char keytemp;
 	manager.showMap();
 	manager.showNextBlock();
+	manager.showHoldBox();
 	manager.startBlock();
 	manager.getGameState().show(); 
 	for (i = 1; 1; i++)
@@ -55,19 +56,54 @@ int TetrisGame::play()
 					break;
 				}
 			}
-			if (keytemp == 32)	//스페이스바를 눌렀을때
+			else
 			{
-				while (is_gameover == 0)
+				switch (keytemp)
 				{
-					is_gameover = manager.moveBlock();
+				case 32:
+					while (is_gameover == 0)
+					{
+						is_gameover = manager.moveBlock();
+					}
+					manager.showCurBlock();
+					break;
+
+				case 'c': case 'C':
+					manager.holdCurrentBlock();
+					break;
+
+				case 27:
+				case 'p': case 'P':
+					manager.changeColor(WHITE);
+					gotoxy(10, 10); std::cout << " ┌───────────────────┐ ";
+					gotoxy(10, 11); std::cout << " │     P A U S E     │ ";
+					gotoxy(10, 12); std::cout << " │ [R]esume  [Q]uit  │ ";
+					gotoxy(10, 13); std::cout << " └───────────────────┘ ";
+
+					while (true) {
+						if (_kbhit()) {
+							char pauseKey = _getch();
+
+							if (pauseKey == 'r' || pauseKey == 'R' || pauseKey == 27) {
+								break;
+							}
+							else if (pauseKey == 'q' || pauseKey == 'Q') {
+								return 0;
+							}
+						}
+						Sleep(50);
+					}
+
+					manager.showMap();
+					manager.showHoldBox();
+					manager.showCurBlock();
+					break;
 				}
-				manager.showCurBlock();
 			}
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
 			is_gameover = manager.moveBlock();
-
 			manager.showCurBlock();
 		}
 

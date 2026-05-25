@@ -2,7 +2,8 @@
 
 
 BlockMapManager::BlockMapManager(int abx, int aby)
-	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, 35, 7) {
+	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, abx + 30, aby + 8),
+	holdShape(-1), remainHolds(5) {
 }
 
 void BlockMapManager::showMap() {
@@ -28,7 +29,7 @@ int BlockMapManager::addBlock() {
 }
 
 int BlockMapManager::startBlock() {
-	if (blocks.size() == 0) {
+	if (blocks.size() == 0 || curBlock + 1 == blocks.size()) { 
 		addBlock();
 	}
 
@@ -174,8 +175,8 @@ void BlockMapManager::showNextBlock() {
 		addBlock();
 	}
 
-	int nextBoxX = 33;
-	int nextBoxY = 1;
+	int nextBoxX = abx + 30;
+	int nextBoxY = aby;
 
 	changeColor((gameState.getLevel() + 1) % 6 + 1);
 	for (int i = 1; i < 7; i++) {
@@ -236,5 +237,59 @@ void BlockMapManager::moveLeft()
 	if (!canPlace()) {
 		blocks[curBlock].moveRight();
 	}
+	blocks[curBlock].show();
+}
+
+void BlockMapManager::addHolds(int count) {
+	remainHolds += count;
+	showHoldBox(); // 횟수가 올랐으니 화면 즉시 갱신
+}
+
+void BlockMapManager::showHoldBox() {
+	int holdBoxX = abx + 43; //hold 박스 위치 조정
+	int holdBoxY = aby;
+
+	changeColor(GRAY);
+	moveCursor(holdBoxX, holdBoxY - 1);
+	std::cout << "HOLD (" << remainHolds << ")  ";
+
+	for (int i = 1; i < 7; i++) {
+		moveCursor(holdBoxX, holdBoxY + i - 1);
+		for (int j = 0; j < 6; j++) {
+			if (i == 1 || i == 6 || j == 0 || j == 5) {
+				std::cout << "■ ";
+			}
+			else {
+				std::cout << "  ";
+			}
+		}
+	}
+
+	if (holdShape != -1) {
+		Block hBlock(holdShape, holdBoxX + 2, holdBoxY + 1);
+		hBlock.setCord(0, 0);
+		hBlock.show();
+	}
+}
+
+void BlockMapManager::holdCurrentBlock() {
+	if (remainHolds <= 0) return;
+
+	blocks[curBlock].erase();
+
+	if (holdShape == -1) {
+		holdShape = blocks[curBlock].getShape();
+		startBlock();
+		showNextBlock();
+	}
+	else {
+		int tempShape = blocks[curBlock].getShape();
+		blocks[curBlock] = Block(holdShape, abx, aby);
+		blocks[curBlock].setCord(5, -4);
+		holdShape = tempShape;
+	}
+
+	remainHolds--;     
+	showHoldBox();     
 	blocks[curBlock].show();
 }

@@ -16,6 +16,7 @@ class BlockMapManager : public Object
 
 	int holdShape;					// hold ºí·Ï ¸ð¾ç
 	int remainHolds;				// hold ÀÜ¿© È½¼ö
+	int comboCount;					// ÄÞº¸ È½¼ö
 public:
 	BlockMapManager(int abx = 5, int aby = 1);
 

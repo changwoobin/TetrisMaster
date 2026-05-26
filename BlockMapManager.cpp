@@ -73,11 +73,10 @@ bool BlockMapManager::canPlace() {
 }
 
 int BlockMapManager::checkFullLine() {
-	int l = 0;
-	for (int i = 0; i < 20; i++) {
-		int curLines = gameState.getLines();
-		int curScore = gameState.getScore();
 
+	int clearedLinesThisTurn = 0; // 이번 턴에 지운 줄 수
+
+	for (int i = 0; i < 20; i++) {
 		int j;
 		for (j = 0; j < 13; j++) {
 			if (map(j, i) == 0) {
@@ -86,7 +85,7 @@ int BlockMapManager::checkFullLine() {
 		}
 
 		if (j == 13) {
-			curLines++;		
+			clearedLinesThisTurn++;
 			
 			map.draw(gameState.getLevel());
 			changeColor(BLUE);
@@ -111,15 +110,36 @@ int BlockMapManager::checkFullLine() {
 			for (int j = 1; j < 13; j++) {
 				map.setMap(0, j, 0);
 			}
-
-			curScore += 100 + (gameState.getLevel() * 10) + (rand() % 10);
-
-			gameState.setScore(curScore);
-			gameState.setLines(curLines);
-			gameState.show();
 		}
 	}
+	if (clearedLinesThisTurn > 0) {
+		comboCount++; // 콤보 증가
 
+		int baseScore = 100 + (gameState.getLevel() * 10) + (rand() % 10);
+		int finalScore = 0;
+
+		// 1. 다중 클리어 보상 (몇 줄 지웠는지에 따라 배수 적용)
+		switch (clearedLinesThisTurn) {
+		case 1: finalScore = baseScore; break;
+		case 2: finalScore = baseScore * 3; break;
+		case 3: finalScore = baseScore * 5; break;
+		case 4: finalScore = baseScore * 10; break;
+		}
+
+		// 2. 연속 콤보 보상 (2번 연속부터 추가 점수)
+		if (comboCount > 1) {
+			finalScore += (comboCount * 50);
+		}
+
+		int curLines = gameState.getLines();
+		int curScore = gameState.getScore();
+		gameState.setLines(curLines + clearedLinesThisTurn);
+		gameState.setScore(curScore + finalScore);
+		gameState.show();
+	}
+	else {
+		comboCount = 0;
+	}
 	return 0;
 }
 

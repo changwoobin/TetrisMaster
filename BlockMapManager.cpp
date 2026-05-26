@@ -3,7 +3,7 @@
 
 BlockMapManager::BlockMapManager(int abx, int aby)
 	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, abx + 30, aby + 8),
-	holdShape(-1), remainHolds(3) {
+	holdShape(-1), remainHolds(2), comboCount(0) {
 }
 
 void BlockMapManager::showMap() {

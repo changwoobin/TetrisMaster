@@ -71,7 +71,7 @@ int TetrisGame::play()
 		{
 			manager.changeColor(WHITE);
 			gotoxy(10, 10); std::cout << " 忙式式式式式式式式式式式式式式式式式式式忖 ";
-			gotoxy(10, 11); std::cout << " 弛      P A U S E     弛 ";
+			gotoxy(10, 11); std::cout << " 弛      P A U S E    弛 ";
 			gotoxy(10, 12); std::cout << " 弛 [R]esume  [Q]uit  弛 ";
 			gotoxy(10, 13); std::cout << " 戌式式式式式式式式式式式式式式式式式式式戎 ";
 			

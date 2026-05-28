@@ -46,7 +46,6 @@ NEXT 박스나 HOLD 박스에 있던 블록이 메인 보드로 나올 때, 좌�
 
 
 # Flip
----
 ## Map
 `void flip()` : 현재 `totalBlock`을 뒤집음
 `void stepGravity()` : `totalBlock`에 쌓여있는 블록들을 한칸씩 밑으로 이동
@@ -55,7 +54,6 @@ NEXT 박스나 HOLD 박스에 있던 블록이 메인 보드로 나올 때, 좌�
 ## TetrisGame
 `int nextFlipTick`, `void scheduleNextFlip(int cur)` : 다음에 Flip을 할 Tick은 `scheduleNextFlip` 함수를 호출하여 `nextFlipTick`에 저장
 # Random Line 생성
----
 ## Map
 `void insertLine(int pos, int line[])` : `int line[]`으로 삽입할 줄을 입력받고 `pos`번째 줄에 삽입
 ## BlockMapManager

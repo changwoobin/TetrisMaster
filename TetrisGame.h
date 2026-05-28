@@ -14,10 +14,14 @@ class TetrisGame
 {
 	BlockMapManager manager;
 	int level;
+	int nextFlipTick;
+	int nextRandomTick;
 public:
  	TetrisGame() = default;
 	void setGame(int level);
 	int play();
 	void gotoxy(int x, int y);
+	void scheduleNextFlip(int cur);
+	void scheduleNextRandom(int cur);
 };
 

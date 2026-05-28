@@ -1,5 +1,5 @@
 #include "BlockMapManager.h"
-
+#include <conio.h>
 
 BlockMapManager::BlockMapManager(int abx, int aby)
 	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, abx + 30, aby + 8),
@@ -312,4 +312,31 @@ void BlockMapManager::holdCurrentBlock() {
 	remainHolds--;     
 	showHoldBox();     
 	blocks[curBlock].show();
+}
+
+void BlockMapManager::flipMap()
+{
+	map.flip();
+	showMap();
+	Sleep(300);
+
+	while (map.stepGravity()) {
+		showMap();
+		Sleep(45);
+	}
+
+	while (_kbhit()) _getch();
+}
+
+void BlockMapManager::addRandomLine()
+{
+	int line[12];
+
+	for (int i = 0; i < 12; i++) {
+		int randNum = rand() % 2;
+
+		line[i] = randNum;
+	}
+
+	map.insertLine(19, line);
 }

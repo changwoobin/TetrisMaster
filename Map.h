@@ -14,5 +14,9 @@ public:
     void draw(int level);
     void setMap(int row, int col, int data);
 
+    void flip();
+    bool stepGravity();
+    void insertLine(int pos, int line[]);
+
     int operator()(int x, int y);
 };

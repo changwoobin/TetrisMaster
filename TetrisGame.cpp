@@ -6,6 +6,9 @@ void TetrisGame::setGame(int level)
 {
 	manager.getGameState().setLevel(level);
 	this->level = level;
+	srand((unsigned)time(NULL));
+	scheduleNextFlip(0);
+	scheduleNextRandom(0);
 }
 
 int TetrisGame::play()
@@ -21,6 +24,17 @@ int TetrisGame::play()
 	bool prev_C = false;
 	for (i = 1; 1; i++)
 	{	
+		if (i >= nextFlipTick) {
+			manager.flipMap();
+			scheduleNextFlip(i);
+			continue;
+		}
+
+		if (i >= nextRandomTick) {
+			manager.addRandomLine();
+			scheduleNextRandom(i);
+			continue;
+		}
 		manager.changeColor(BLACK);
 		gotoxy(77, 23);
 
@@ -139,4 +153,16 @@ void TetrisGame::gotoxy(int x, int y)
 	pos.Y = y;
 
 	SetConsoleCursorPosition(hConsole, pos);
+}
+
+void TetrisGame::scheduleNextFlip(int cur)
+{
+	int delay = 1333 + (rand() % 1334);
+	nextFlipTick = cur + delay;
+}
+
+void TetrisGame::scheduleNextRandom(int cur)
+{
+	int delay = 1333 + (rand() % 1334);
+	nextRandomTick = cur + delay;
 }

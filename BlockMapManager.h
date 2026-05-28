@@ -40,5 +40,8 @@ public:
 	int getCurBlockX() const;
 	void moveRight();
 	void moveLeft();
+
+	void flipMap();
+	void addRandomLine();
 };
 

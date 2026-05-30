@@ -12,5 +12,7 @@ public:
     void setOffset(int x, int y);
 
     void moveCursor(int x, int y);
-    void changeColor(int color);
+
+    static void gotoxy(int x, int y);
+    static void changeColor(int color);
 };

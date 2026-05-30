@@ -12,16 +12,19 @@
 
 class TetrisGame
 {
+	GameState gameState;
 	BlockMapManager manager;
 	int level;
 	int nextFlipTick;
 	int nextRandomTick;
 public:
- 	TetrisGame() = default;
+ 	TetrisGame();
 	void setGame(int level);
 	int play();
-	void gotoxy(int x, int y);
+	int multiplay();
 	void scheduleNextFlip(int cur);
 	void scheduleNextRandom(int cur);
+	void addLineAttack_to_Opponent(BlockMapManager& m, int lines);
+	void printAttackCounter(int attackCounter, int x, int y);
 };
 

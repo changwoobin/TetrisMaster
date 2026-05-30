@@ -11,11 +11,11 @@ void Object::setOffset(int x, int y) {
 }
 
 void Object::moveCursor(int x, int y) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     COORD pos;
-    pos.X = x;
-    pos.Y = y;
+    pos.X = x * 2 + abx;
+    pos.Y = y + aby;
 
     SetConsoleCursorPosition(hConsole, pos);
 }
@@ -23,4 +23,12 @@ void Object::moveCursor(int x, int y) {
 void Object::changeColor(int color) {
     static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
+}
+
+void  Object::gotoxy(int x, int y) {
+    static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD pos;
+    pos.X = x;
+    pos.Y = y;
+	SetConsoleCursorPosition(hConsole, pos);
 }

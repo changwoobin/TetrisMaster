@@ -66,6 +66,32 @@ bool BlockMapManager::canPlace() {
 	return true;
 }
 
+bool BlockMapManager::canPlace(int blockIndex)
+{
+	int curBlockX = blocks[blockIndex].getX();
+	int curBlockY = blocks[blockIndex].getY();
+	int curBlockAngle = blocks[blockIndex].getAngle();
+	int curBlockShape = blocks[blockIndex].getShape();
+	bool isBlocked = false;
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (curBlockX + j == 0 || curBlockX + j == 13) {
+				isBlocked = true;
+			}
+			else if (curBlockY + i >= 0 && curBlockX + j >= 0) {
+				isBlocked = (map(curBlockX + j, curBlockY + i) == 1) ? true : false;
+			}
+
+			if (isBlocked && Block::blocks[curBlockShape][curBlockAngle][i][j] == 1) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 int BlockMapManager::checkFullLine(GameState& gameState) {
 
 	int clearedLinesThisTurn = 0; // 이번 턴에 지운 줄 수
@@ -132,6 +158,24 @@ int BlockMapManager::mergeBlock(GameState& gameState) {
 	return 0;
 }
 
+int BlockMapManager::mergeBlock(GameState& gameState, int blockIndex)
+{
+	int curBlockX = blocks[blockIndex].getX();
+	int curBlockY = blocks[blockIndex].getY();
+	int curBlockAngle = blocks[blockIndex].getAngle();
+	int curBlockShape = blocks[blockIndex].getShape();
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			map.setMap(curBlockY + i, curBlockX + j, Block::blocks[curBlockShape][curBlockAngle][i][j] | map(curBlockX + j, curBlockY + i));
+		}
+	}
+
+	checkFullLine(gameState);
+	showMap();
+	return 0;
+}
+
 int BlockMapManager::moveBlock(GameState& gameState) {
 	blocks[curBlock].erase();
 
@@ -148,6 +192,27 @@ int BlockMapManager::moveBlock(GameState& gameState) {
 		addBlock();
 		startBlock();
 		showNextBlock();
+		return 2;
+	}
+
+	return 0;
+}
+
+int BlockMapManager::moveBlock(GameState& gameState, int blockIndex)
+{
+	blocks[blockIndex].erase();
+
+	blocks[blockIndex].moveDown();
+	if (!canPlace(blockIndex)) {
+		if (blocks[blockIndex].getY() <= 0) {
+			blocks[blockIndex].moveUp();
+			return 1;
+		}
+
+		blocks[blockIndex].moveUp();
+		mergeBlock(gameState, blockIndex);
+
+
 		return 2;
 	}
 
@@ -201,6 +266,16 @@ int BlockMapManager::getCurBlockX() const
 	return blocks[curBlock].getX();
 }
 
+int BlockMapManager::getCurBlockY() const
+{
+	return blocks[curBlock].getY();
+}
+
+int BlockMapManager::getCurBlockIndex() const
+{
+	return curBlock;
+}
+
 void BlockMapManager::moveRight()
 {
 	if (blocks[curBlock].getX() < 13)
@@ -244,6 +319,25 @@ int BlockMapManager::hardDrop(GameState& gameState)
 	{
 		is_gameover = moveBlock(gameState);
 	}
+	showCurBlock();
+
+	return is_gameover;
+}
+
+int BlockMapManager::hardDrop(GameState& gameState, int blockIndex, int x, int y)
+{
+
+	int is_gameover = 0;
+	int bX, bY;
+	bX = blocks[blockIndex].getX();
+	bY = blocks[blockIndex].getY();
+	blocks[blockIndex].setCord(x, y);
+	while (is_gameover == 0)
+	{
+		is_gameover = moveBlock(gameState, blockIndex);
+	}
+
+	blocks[blockIndex].setCord(bX, bY);
 	showCurBlock();
 
 	return is_gameover;

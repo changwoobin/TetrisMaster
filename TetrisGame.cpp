@@ -152,6 +152,8 @@ int TetrisGame::multiplay()
 	bool prev_Comma = false;
 	bool prev_B = false;
 	bool prev_Period = false;
+	bool prev_N = false;
+	bool prev_Slash = false;
 	BlockMapManager guestManager(100, 1);
 	GameState guestGameState(0, 0, 0, 100, 1);
 
@@ -225,12 +227,23 @@ int TetrisGame::multiplay()
 		{
 			manager.holdCurrentBlock();
 		}
+
 		if ((GetAsyncKeyState('B') & 0x8000) && !prev_B)
 		{
 			if (attackCounter > 0) {
 				attackCounter--;
 				printAttackCounter(attackCounter, 5, 23);
 				guestManager.flipMap();
+			}
+		}
+		else if ((GetAsyncKeyState('N') & 0x8000) && !prev_N)
+		{
+			if (attackCounter > 0) {
+				attackCounter--;
+				printAttackCounter(attackCounter, 5, 23);
+				guestManager.hardDrop(guestGameState, manager.getCurBlockIndex(), manager.getCurBlockX(), manager.getCurBlockY());
+				manager.showMap();
+				manager.showCurBlock();
 			}
 		}
 
@@ -275,6 +288,16 @@ int TetrisGame::multiplay()
 				guestAttackCounter--;
 				printAttackCounter(guestAttackCounter, 100, 23);
 				manager.flipMap();
+			}
+		}
+		else if ((GetAsyncKeyState(VK_OEM_2) & 0x8000) && !prev_Slash)
+		{
+			if (guestAttackCounter > 0) {
+				guestAttackCounter--;
+				printAttackCounter(guestAttackCounter, 100, 23);
+				manager.hardDrop(gameState, guestManager.getCurBlockIndex(), guestManager.getCurBlockX(), guestManager.getCurBlockY());
+				guestManager.showMap();
+				guestManager.showCurBlock();
 			}
 		}
 
@@ -345,6 +368,8 @@ int TetrisGame::multiplay()
 		prev_Period = (GetAsyncKeyState(VK_OEM_PERIOD) & 0x8000);
 		prev_Comma = (GetAsyncKeyState(VK_OEM_COMMA) & 0x8000);
 		prev_V = (GetAsyncKeyState('V') & 0x8000);
+		prev_N = (GetAsyncKeyState('N') & 0x8000);
+		prev_Slash = (GetAsyncKeyState(VK_OEM_2) & 0x8000);
 		Object::gotoxy(77, 23);
 		Sleep(30);
 		Object::gotoxy(77, 23);

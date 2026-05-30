@@ -33,18 +33,29 @@ public:
 	void addHolds(int count);
 
 	bool canPlace();		// 블록을 놓을 수 있으면 true 반환(strike_check)
+	bool canPlace(int blockIndex);
 	int checkFullLine(GameState& gameState);
 	int mergeBlock(GameState& gameState);
+	int mergeBlock(GameState& gameState, int blockIndex);
 	int moveBlock(GameState& gameState);
+	int moveBlock(GameState& gameState, int blockIndex);
+
 	void showCurBlock();
 	void showNextBlock();
+
 	void currentBlockRotate();
 	bool canRotate();
+
 	int getCurBlockX() const;
+	int getCurBlockY() const;
+	int getCurBlockIndex() const;
+
+
 	void moveRight();
 	void moveLeft();
 	int moveDown(GameState& gameState);
 	int hardDrop(GameState& gameState);
+	int hardDrop(GameState& gameState, int blockIndex, int x, int y);
 
 	void flipMap();
 	void addRandomLine();

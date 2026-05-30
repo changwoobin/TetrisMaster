@@ -1,21 +1,20 @@
 #include "BlockMapManager.h"
+
 #include <conio.h>
 
 BlockMapManager::BlockMapManager(int abx, int aby)
-	: Object(abx, aby), curBlock(-1), map(abx, aby), gameState(0, 0, 0, abx + 30, aby + 8),
-	holdShape(-1), remainHolds(2), comboCount(0) {
+	: abx(abx), aby(aby), curBlock(-1), map(abx, aby), holdShape(-1), remainHolds(2), comboCount(0), level(0), blocksStorage(Blocks::getInstance()), blocks(Blocks::getInstance().getBlocks()){
 }
 
 void BlockMapManager::showMap() {
-	map.draw(gameState.getLevel());
-	gameState.show();
+	map.draw(level);
 }
 
 int BlockMapManager::addBlock() {
 	int shape;
 	int stickProb = rand() % 100;
 
-	if (stickProb <= Stage::data[gameState.getLevel()].stickRate) {
+	if (stickProb <= Stage::data[level].stickRate) {
 		shape = 0;
 	}
 	else {
@@ -23,7 +22,7 @@ int BlockMapManager::addBlock() {
 	}
 
 	Block newBlock(shape, abx, aby);
-	blocks.push_back(newBlock);
+	blocksStorage.push_back(newBlock);
 
 	return 0;
 }
@@ -40,11 +39,6 @@ int BlockMapManager::startBlock() {
 	blocks[curBlock].show();
 
 	return 0;
-}
-
-GameState& BlockMapManager::getGameState()
-{
-	return gameState;
 }
 
 bool BlockMapManager::canPlace() {
@@ -72,7 +66,7 @@ bool BlockMapManager::canPlace() {
 	return true;
 }
 
-int BlockMapManager::checkFullLine() {
+int BlockMapManager::checkFullLine(GameState& gameState) {
 
 	int clearedLinesThisTurn = 0; // 이번 턴에 지운 줄 수
 
@@ -87,35 +81,13 @@ int BlockMapManager::checkFullLine() {
 		if (j == 13) {
 			clearedLinesThisTurn++;
 			
-			map.draw(gameState.getLevel());
-			changeColor(BLUE);
-			moveCursor(1 * 2 + abx, i + aby);
-			for (int j = 1; j < 13; j++) {
-				cout << "□ ";
-				Sleep(10);
-			}
-
-			moveCursor(1 * 2 + abx, i + aby);
-			for (int j = 1; j < 13; j++) {
-				cout << "  ";
-				Sleep(10);
-			}
-
-			for (int k = i; k > 0; k--) {
-				for (int j = 1; j < 13; j++) {
-					map.setMap(k, j, map(j, k - 1));
-				}
-			}
-
-			for (int j = 1; j < 13; j++) {
-				map.setMap(0, j, 0);
-			}
+			map.clearLine(i, level);
 		}
 	}
 	if (clearedLinesThisTurn > 0) {
 		comboCount++; // 콤보 증가
 
-		int baseScore = 100 + (gameState.getLevel() * 10) + (rand() % 10);
+		int baseScore = 100 + (level * 10) + (rand() % 10);
 		int finalScore = 0;
 
 		// 1. 다중 클리어 보상 (몇 줄 지웠는지에 따라 배수 적용)
@@ -131,9 +103,8 @@ int BlockMapManager::checkFullLine() {
 			finalScore += (comboCount * 50);
 		}
 
-		int curLines = gameState.getLines();
 		int curScore = gameState.getScore();
-		gameState.setLines(curLines + clearedLinesThisTurn);
+		gameState.addLines(clearedLinesThisTurn);
 		gameState.setScore(curScore + finalScore);
 		gameState.show();
 	}
@@ -144,7 +115,7 @@ int BlockMapManager::checkFullLine() {
 }
 
 
-int BlockMapManager::mergeBlock() {
+int BlockMapManager::mergeBlock(GameState& gameState) {
 	int curBlockX = blocks[curBlock].getX();
 	int curBlockY = blocks[curBlock].getY();
 	int curBlockAngle = blocks[curBlock].getAngle();
@@ -156,12 +127,12 @@ int BlockMapManager::mergeBlock() {
 		}
 	}
 
-	checkFullLine();
+	checkFullLine(gameState);
 	showMap();
 	return 0;
 }
 
-int BlockMapManager::moveBlock() {
+int BlockMapManager::moveBlock(GameState& gameState) {
 	blocks[curBlock].erase();
 
 	blocks[curBlock].moveDown();
@@ -172,7 +143,7 @@ int BlockMapManager::moveBlock() {
 		}
 
 		blocks[curBlock].moveUp();
-		mergeBlock();
+		mergeBlock(gameState);
 
 		addBlock();
 		startBlock();
@@ -185,6 +156,7 @@ int BlockMapManager::moveBlock() {
 
 void BlockMapManager::showCurBlock()
 {
+	blocks[curBlock].setOffset(abx, aby);
 	blocks[curBlock].show();
 }
 
@@ -195,33 +167,22 @@ void BlockMapManager::showNextBlock() {
 		addBlock();
 	}
 
-	int nextBoxX = abx + 30;
-	int nextBoxY = aby;
+	int nextBoxX = 30;
+	int nextBoxY = 0;
 
-	changeColor((gameState.getLevel() + 1) % 6 + 1);
-	for (int i = 1; i < 7; i++) {
-		moveCursor(nextBoxX, nextBoxY + i - 1);
-		for (int j = 0; j < 6; j++) {
-			if (i == 1 || i == 6 || j == 0 || j == 5) {
-				cout << "■ ";
-			}
-			else {
-				cout << "  ";
-			}
-		}
-	}
-
-	blocks[nextBlock].setOffset(nextBoxX + 2, nextBoxY + 1);
-	blocks[nextBlock].setCord(0, 0);
+	blocksStorage.drawBorder(nextBoxX + abx, nextBoxY + aby, (level + 1) % 6 + 1);
+	blocks[nextBlock].setOffset(abx, aby);
+	blocks[nextBlock].setCord((nextBoxX + 2) / 2, nextBoxY + 1);
 	blocks[nextBlock].show();
 }
 
 void BlockMapManager::currentBlockRotate()
 {
-	blocks[curBlock].erase();
-	blocks[curBlock].rotate();
-	blocks[curBlock].show();
-
+	if (canRotate()) {
+		blocks[curBlock].erase();
+		blocks[curBlock].rotate();
+		blocks[curBlock].show();
+	}
 }
 
 bool BlockMapManager::canRotate()
@@ -242,22 +203,50 @@ int BlockMapManager::getCurBlockX() const
 
 void BlockMapManager::moveRight()
 {
-	blocks[curBlock].erase();
-	blocks[curBlock].moveRight();
-	if (!canPlace()) {
-		blocks[curBlock].moveLeft();
+	if (blocks[curBlock].getX() < 13)
+	{
+		blocks[curBlock].erase();
+		blocks[curBlock].moveRight();
+		if (!canPlace()) {
+			blocks[curBlock].moveLeft();
+		}
+		blocks[curBlock].show();
 	}
-	blocks[curBlock].show();
+	
 }
 
 void BlockMapManager::moveLeft()
 {
-	blocks[curBlock].erase();
-	blocks[curBlock].moveLeft();
-	if (!canPlace()) {
-		blocks[curBlock].moveRight();
+	if (blocks[curBlock].getX() > 1)
+	{
+		blocks[curBlock].erase();
+		blocks[curBlock].moveLeft();
+		if (!canPlace()) {
+			blocks[curBlock].moveRight();
+		}
+		blocks[curBlock].show();
 	}
-	blocks[curBlock].show();
+}
+
+int BlockMapManager::moveDown(GameState& gameState)
+{
+	int is_gameover = 0;
+	is_gameover = moveBlock(gameState);
+	showCurBlock();
+
+	return is_gameover;
+}
+
+int BlockMapManager::hardDrop(GameState& gameState)
+{
+	int is_gameover = 0;
+	while (is_gameover == 0)
+	{
+		is_gameover = moveBlock(gameState);
+	}
+	showCurBlock();
+
+	return is_gameover;
 }
 
 void BlockMapManager::addHolds(int count) {
@@ -266,28 +255,14 @@ void BlockMapManager::addHolds(int count) {
 }
 
 void BlockMapManager::showHoldBox() {
-	int holdBoxX = abx + 43; // hold 박스 위치 조정
-	int holdBoxY = aby;
+	int holdBoxX = 43; // hold 박스 위치 조정
+	int holdBoxY = 0;
 
-	changeColor(GRAY);
-	moveCursor(holdBoxX, holdBoxY - 1);
-	std::cout << "HOLD (" << remainHolds << ")  ";
-
-	for (int i = 1; i < 7; i++) {
-		moveCursor(holdBoxX, holdBoxY + i - 1);
-		for (int j = 0; j < 6; j++) {
-			if (i == 1 || i == 6 || j == 0 || j == 5) {
-				std::cout << "■ ";
-			}
-			else {
-				std::cout << "  ";
-			}
-		}
-	}
+	blocksStorage.drawBorder(holdBoxX + abx, holdBoxY + aby, GRAY, remainHolds);
 
 	if (holdShape != -1) {
-		Block hBlock(holdShape, holdBoxX + 2, holdBoxY + 1);
-		hBlock.setCord(0, 0);
+		Block hBlock(holdShape, abx, aby);
+		hBlock.setCord((holdBoxX + 2) / 2, holdBoxY + 1);
 		hBlock.show();
 	}
 }

@@ -6,7 +6,8 @@
 int main(void) {
 	TetrisGame game;
 	game.setGame(0);
-	game.play();
+	game.multiplay();
+	// game.play();
 
 	return 0;
 }

@@ -17,6 +17,7 @@ public:
     void flip();
     bool stepGravity();
     void insertLine(int pos, int line[]);
+    void clearLine(const int pos, const int level);
 
     int operator()(int x, int y);
 };

@@ -24,7 +24,7 @@ const int Block::blocks[7][4][4][4] = {
 };
 
 Block::Block(int shape, int abx, int aby)
-    : Object(abx, aby), shape(shape), x(15), y(1), angle(0)
+	: Object(abx, aby), shape(shape), x(15), y(1), angle(0), is_Next(false), is_Hold(false)
 {
 }
 
@@ -50,6 +50,7 @@ void Block::show() {
     case 5: changeColor(VIOLET); break;
     case 6: changeColor(GREEN); break;
     }
+    
 
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -58,13 +59,14 @@ void Block::show() {
 
             if (blocks[shape][angle][j][i] == 1) {
                 // Object의 절대좌표(abx, aby) 사용
-                moveCursor((i + x) * 2 + abx, j + y + aby);
+                moveCursor(i+x, j+y);
                 cout << "■";
             }
         }
     }
-    moveCursor(77, 23);
+    moveCursor(36, 22);
 }
+
 
 void Block::erase() {
     for (int i = 0; i < 4; i++) {
@@ -73,7 +75,7 @@ void Block::erase() {
                 if (y + j < 0)
                     continue;
 
-                moveCursor((i + x) * 2 + abx, j + y + aby);
+                moveCursor(i + x, j + y);
                 cout << "  ";
             }
         }

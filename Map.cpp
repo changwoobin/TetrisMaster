@@ -27,7 +27,7 @@ void Map::draw(int level) {
                 changeColor(DARK_GRAY);
             }
 
-            moveCursor((j * 2) + abx, i + aby);
+            moveCursor(j, i);
 
             if (totalBlock[i][j] == 1) {
                 cout << "бс";
@@ -126,7 +126,7 @@ bool Map::stepGravity() {
 
 void Map::insertLine(int pos, int line[])
 {
-    for (int i = 1; i < pos; i++) {
+    for (int i = 1; i < pos+1; i++) {
         for (int j = 1; j < 13; j++) {
             totalBlock[i - 1][j] = totalBlock[i][j];
         }
@@ -134,6 +134,34 @@ void Map::insertLine(int pos, int line[])
 
     for (int i = 1; i < 13; i++) {
         totalBlock[pos][i] = line[i - 1];
+    }
+}
+
+void Map::clearLine(const int pos, const int level)
+{
+    draw(level);
+    changeColor(BLUE);
+    moveCursor(1, pos);
+    for (int j = 1; j < 13; j++) {
+        cout << "бр ";
+        Sleep(10);
+    }
+
+    moveCursor(1, pos);
+    for (int j = 1; j < 13; j++) {
+        cout << "  ";
+        Sleep(10);
+    }
+
+    for (int k = pos; k > 0; k--) {
+        for (int j = 1; j < 13; j++) {
+            setMap(k, j, totalBlock[k - 1][j]);
+        }
+    }
+    
+
+    for (int j = 1; j < 13; j++) {
+        setMap(0, j, 0);
     }
 }
 

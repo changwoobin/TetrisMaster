@@ -12,7 +12,8 @@ private:
 	int shape;
 	int x, y;
 	int angle;
-
+	bool is_Next;
+	bool is_Hold;
 public:
 	static const int blocks[7][4][4][4];
 

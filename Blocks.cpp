@@ -29,7 +29,7 @@ void Blocks::drawBorder(int boxX, int boxY, int color)
         Object::gotoxy(boxX, boxY + i - 1);
         for (int j = 0; j < 6; j++) {
             if (i == 1 || i == 6 || j == 0 || j == 5) {
-                cout << "бс ";
+                cout << "бс";
             }
             else {
                 cout << "  ";
@@ -47,7 +47,7 @@ void Blocks::drawBorder(int boxX, int boxY, int color, int remain)
         Object::gotoxy(boxX, boxY + i - 1);
         for (int j = 0; j < 6; j++) {
             if (i == 1 || i == 6 || j == 0 || j == 5) {
-                cout << "бс ";
+                cout << "бс";
             }
             else {
                 cout << "  ";

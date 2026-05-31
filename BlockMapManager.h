@@ -21,6 +21,11 @@ class BlockMapManager
 	int remainHolds;				// hold ÀÜ¿© È½¼ö
 	int comboCount;					// ÄÞº¸ È½¼ö
 	int abx, aby;					// Àý´ëÁÂÇ¥ ¿ÀÇÁ¼Â
+
+	int lastComboX;
+	int lastComboY;
+	int trashAnimTick;				//¾Ö´Ï¸ÞÀÌ¼Ç ¿ë º¯¼ö
+
 public:
 	BlockMapManager(int abx = 5, int aby = 1);
 
@@ -59,5 +64,12 @@ public:
 
 	void flipMap();
 	void addRandomLine();
+
+	void erasePauseMenu();
+	void drawPauseMenu();
+	void drawStageClear();
+	void drawCombo(int count);
+	void drawTrashBag();
+
 };
 

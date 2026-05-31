@@ -112,6 +112,8 @@ int BlockMapManager::checkFullLine(GameState& gameState) {
 	}
 	if (clearedLinesThisTurn > 0) {
 		comboCount++; // 콤보 증가
+		trashAnimTick = 30; 
+		drawCombo(comboCount);
 
 		int baseScore = 100 + (level * 10) + (rand() % 10);
 		int finalScore = 0;
@@ -408,4 +410,89 @@ void BlockMapManager::addRandomLine()
 	}
 
 	map.insertLine(19, line);
+}
+
+void BlockMapManager::drawPauseMenu() {
+	int evX = (abx % 2 == 0) ? abx : abx + 1; 
+
+	Object::changeColor(WHITE);
+	Object::gotoxy(evX + 2, aby + 7); std::cout << "┌─────────────────────────────────┐";
+	Object::gotoxy(evX + 2, aby + 8); std::cout << "│          휴  식  시  간         │";
+	Object::gotoxy(evX + 2, aby + 9); std::cout << "│                                 │";
+	Object::gotoxy(evX + 2, aby + 10);std::cout << "│  [R] 다시  일하러  가자!        │";
+	Object::gotoxy(evX + 2, aby + 11);std::cout << "│                                 │";
+	Object::gotoxy(evX + 2, aby + 12);std::cout << "│  [Q] 정말  퇴근하시겠습니까?    │";
+	Object::gotoxy(evX + 2, aby + 13);std::cout << "└─────────────────────────────────┘";
+}
+
+void BlockMapManager::drawStageClear() {
+	Object::changeColor(YELLOW);
+	Object::gotoxy(abx + 2, aby + 7); std::cout << "┌────────────────┐";
+	Object::gotoxy(abx + 2, aby + 8); std::cout << "│일일 할당량 달성│";
+	Object::gotoxy(abx + 2, aby + 9); std::cout << "│                │";
+	Object::gotoxy(abx + 2, aby + 10);std::cout << "│김씨! 다음 구역!│";
+	Object::gotoxy(abx + 2, aby + 11);std::cout << "│(특근수당 HOLD) │";
+	Object::gotoxy(abx + 2, aby + 12);std::cout << "└────────────────┘";
+}
+
+void BlockMapManager::drawCombo(int count) {
+	if (lastComboX != 0 && lastComboY != 0) {
+		Object::gotoxy(lastComboX, lastComboY);
+		std::cout << "                ";
+	}
+
+	if (count > 1) {
+		lastComboX = abx + 36 + (rand() % 5);
+		lastComboY = aby + 7 + (rand() % 3);
+
+		Object::gotoxy(lastComboX, lastComboY);
+
+		Object::changeColor(YELLOW); std::cout << "★ ";
+		Object::changeColor(RED);    std::cout << count << " 연속 처리 ";
+		Object::changeColor(YELLOW); std::cout << "★";
+
+	}
+	else {
+		lastComboX = 0;
+		lastComboY = 0;
+	}
+}
+
+void BlockMapManager::drawTrashBag() {
+	int tx = abx + 43;
+	int ty = aby + 14;
+
+	Object::changeColor(DARK_GRAY);
+
+	if (trashAnimTick <= 0) {
+		Object::gotoxy(tx, ty);     std::cout << "   //\\\\   ";
+		Object::gotoxy(tx, ty + 1); std::cout << "  /____\\  ";
+		Object::gotoxy(tx, ty + 2); std::cout << " /      \\ ";
+		Object::gotoxy(tx, ty + 3); std::cout << " \\______/ ";
+		return;
+	}
+
+	trashAnimTick--;
+
+	if (trashAnimTick % 10 < 5) {
+		Object::gotoxy(tx, ty);     std::cout << "   //\\\\   ";
+		Object::gotoxy(tx, ty + 1); std::cout << "  /____\\  ";
+		Object::gotoxy(tx, ty + 2); std::cout << " /      \\ ";
+		Object::gotoxy(tx, ty + 3); std::cout << " \\______/ ";
+	}
+	else {
+		Object::gotoxy(tx, ty);     std::cout << "   //\\\\   ";
+		Object::gotoxy(tx, ty + 1); std::cout << "  /~~~~\\  ";
+		Object::gotoxy(tx, ty + 2); std::cout << " /      \\ ";
+		Object::gotoxy(tx, ty + 3); std::cout << " \\______/ ";
+	}
+}
+
+void BlockMapManager::erasePauseMenu() {
+	int evX = (abx % 2 == 0) ? abx : abx + 1;
+
+	for (int i = 0; i < 7; i++) {
+		Object::gotoxy(evX + 2, aby + 7 + i);
+		std::cout << "                                        "; 
+	}
 }

@@ -78,60 +78,27 @@ int TetrisGame::play()
 		}
 		if ((GetAsyncKeyState(27) & 0x8000) || (GetAsyncKeyState('P') & 0x8000)) // ESC 또는 P (일시정지)
 		{
-			Object::changeColor(WHITE);
-			Object::gotoxy(10, 10); std::cout << " ┌───────────────────┐ ";
-			Object::gotoxy(10, 11); std::cout << " │      P A U S E    │ ";
-			Object::gotoxy(10, 12); std::cout << " │ [R]esume  [Q]uit  │ ";
-			Object::gotoxy(10, 13); std::cout << " └───────────────────┘ ";
-
-			Sleep(200);
-
-			while (true) {
-				bool is_R_Pressed = (GetAsyncKeyState('R') & 0x8000) != 0;
-				bool is_Q_Pressed = (GetAsyncKeyState('Q') & 0x8000) != 0;
-				bool is_ESC_Pressed = (GetAsyncKeyState(27) & 0x8000) != 0;
-
-				if (is_R_Pressed || is_ESC_Pressed) {
-					break;
-				}
-				else if (is_Q_Pressed) {
-					return 0;
-				}
-
-				Sleep(30);
-			}
-
-			Sleep(200);
-
-			manager.showMap();
-			manager.showHoldBox();
-			manager.showCurBlock();
+			if (handlePauseMenu(manager) == 1) return 0; // 1(퇴근)이 반환되면 게임 종료
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
 			is_gameover = manager.moveDown(gameState);
 		}
 
-		if (Stage::data[level].clearLine <= gameState.getLines())	//클리어 스테이지
-		{
-			level++;
-			gameState.setLevel(level);
-			gameState.setLevel(level);
-			gameState.setLines(0);
-			manager.addHolds(1);
-			manager.showMap();
-			gameState.show();
-			manager.showNextBlock();
-			manager.showHoldBox();
-		}
+		handleStageClear();
+
 		if (is_gameover == 1)
 		{
+			Object::gotoxy(0, 29);
 			return 1;
 		}
 
 		Object::changeColor(BLACK);
 		prev_UP = (GetAsyncKeyState(VK_UP) & 0x8000);
 		prev_C = (GetAsyncKeyState('C') & 0x8000);
+
+		manager.drawTrashBag();
+
 		Object::gotoxy(77, 23);
 		Sleep(30);
 		Object::gotoxy(77, 23);
@@ -307,34 +274,7 @@ int TetrisGame::multiplay()
 
 		if ((GetAsyncKeyState(27) & 0x8000) || (GetAsyncKeyState('P') & 0x8000)) // ESC 또는 P (일시정지)
 		{
-			Object::changeColor(WHITE);
-			Object::gotoxy(10, 10); std::cout << " ┌───────────────────┐ ";
-			Object::gotoxy(10, 11); std::cout << " │      P A U S E    │ ";
-			Object::gotoxy(10, 12); std::cout << " │ [R]esume  [Q]uit  │ ";
-			Object::gotoxy(10, 13); std::cout << " └───────────────────┘ ";
-
-			Sleep(200);
-
-			while (true) {
-				bool is_R_Pressed = (GetAsyncKeyState('R') & 0x8000) != 0;
-				bool is_Q_Pressed = (GetAsyncKeyState('Q') & 0x8000) != 0;
-				bool is_ESC_Pressed = (GetAsyncKeyState(27) & 0x8000) != 0;
-
-				if (is_R_Pressed || is_ESC_Pressed) {
-					break;
-				}
-				else if (is_Q_Pressed) {
-					return 0;
-				}
-
-				Sleep(30);
-			}
-
-			Sleep(200);
-
-			manager.showMap();
-			manager.showHoldBox();
-			manager.showCurBlock();
+			if (handlePauseMenu(manager, &guestManager) == 1) return 0;
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
@@ -352,10 +292,12 @@ int TetrisGame::multiplay()
 
 		if (is_gameover == 1)
 		{
+			Object::gotoxy(0, 29);
 			return 1;
 		}
 		if (is_guestGameover == 1)
 		{
+			Object::gotoxy(0, 29);
 			return 2;
 		}
 
@@ -370,6 +312,8 @@ int TetrisGame::multiplay()
 		prev_V = (GetAsyncKeyState('V') & 0x8000);
 		prev_N = (GetAsyncKeyState('N') & 0x8000);
 		prev_Slash = (GetAsyncKeyState(VK_OEM_2) & 0x8000);
+		manager.drawTrashBag();
+		guestManager.drawTrashBag();
 		Object::gotoxy(77, 23);
 		Sleep(30);
 		Object::gotoxy(77, 23);
@@ -377,6 +321,61 @@ int TetrisGame::multiplay()
 	return 0;
 }
 
+int TetrisGame::handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager)
+{
+	p1Manager.drawPauseMenu(); // 팝업 띄우기
+	Sleep(200);
+
+	while (true) {
+		bool is_R_Pressed = (GetAsyncKeyState('R') & 0x8000) != 0;
+		bool is_Q_Pressed = (GetAsyncKeyState('Q') & 0x8000) != 0;
+		bool is_ESC_Pressed = (GetAsyncKeyState(27) & 0x8000) != 0;
+
+		if (is_R_Pressed || is_ESC_Pressed) {
+			break; // 재개 (루프 탈출)
+		}
+		else if (is_Q_Pressed) {
+			Object::gotoxy(0, 29);
+			return 1; // 종료(퇴근) 신호 반환
+		}
+		Sleep(30);
+	}
+
+	Sleep(200);
+
+	p1Manager.erasePauseMenu();
+
+	// 팝업이 닫히면 다시 맵 복구
+	p1Manager.showMap();
+	p1Manager.showHoldBox();
+	p1Manager.showCurBlock();
+
+	if (p2Manager != nullptr) { // 멀티플레이일 경우 2P 화면도 복구
+		p2Manager->showMap();
+		p2Manager->showHoldBox();
+		p2Manager->showCurBlock();
+	}
+	return 0; // 계속 진행 신호 반환
+}
+
+void TetrisGame::handleStageClear()
+{
+	if (Stage::data[level].clearLine <= gameState.getLines())
+	{
+		manager.drawStageClear();
+		Sleep(1500);
+
+		level++;
+		gameState.setLevel(level);
+		gameState.setLines(0);
+		manager.addHolds(1);
+
+		manager.showMap();
+		gameState.show();
+		manager.showNextBlock();
+		manager.showHoldBox();
+	}
+}
 void TetrisGame::scheduleNextFlip(int cur)
 {
 	int delay = 1333 + (rand() % 1334);

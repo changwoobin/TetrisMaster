@@ -26,5 +26,8 @@ public:
 	void scheduleNextRandom(int cur);
 	void addLineAttack_to_Opponent(BlockMapManager& m, int lines);
 	void printAttackCounter(int attackCounter, int x, int y);
+
+	int handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager = nullptr);
+	void handleStageClear();
 };
 

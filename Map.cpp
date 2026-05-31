@@ -143,7 +143,7 @@ void Map::clearLine(const int pos, const int level)
     changeColor(BLUE);
     moveCursor(1, pos);
     for (int j = 1; j < 13; j++) {
-        cout << "бр ";
+        cout << "бр";
         Sleep(10);
     }
 

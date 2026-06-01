@@ -1,6 +1,11 @@
 #include "Map.h"
 
 Map::Map(int abx, int aby) : Object(abx, aby) {
+    reset();
+}
+
+void Map::reset()
+{
     for (int i = 0; i < 20; i++) {
         for (int j = 0; j < 14; j++) {
             if (j == 0 || j == 13) {
@@ -15,6 +20,7 @@ Map::Map(int abx, int aby) : Object(abx, aby) {
     for (int j = 0; j < 14; j++) {
         totalBlock[20][j] = 1;
     }
+
 }
 
 void Map::draw(int level) {

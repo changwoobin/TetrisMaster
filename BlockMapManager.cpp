@@ -6,6 +6,15 @@ BlockMapManager::BlockMapManager(int abx, int aby)
 	: abx(abx), aby(aby), curBlock(-1), map(abx, aby), holdShape(-1), remainHolds(2), comboCount(0), level(0), blocksStorage(Blocks::getInstance()), blocks(Blocks::getInstance().getBlocks()){
 }
 
+void BlockMapManager::reset()
+{
+	map.reset();
+	holdShape = -1;
+	remainHolds = 2;
+	comboCount = 0;
+	level = 0;
+}
+
 void BlockMapManager::showMap() {
 	map.draw(level);
 }
@@ -412,6 +421,16 @@ void BlockMapManager::addRandomLine()
 	map.insertLine(19, line);
 }
 
+
+void BlockMapManager::drawStageClear() {
+	Object::changeColor(YELLOW);
+	Object::gotoxy(abx + 2, aby + 7); std::cout << "┌────────────────┐";
+	Object::gotoxy(abx + 2, aby + 8); std::cout << "│일일 할당량 달성│";
+	Object::gotoxy(abx + 2, aby + 9); std::cout << "│                │";
+	Object::gotoxy(abx + 2, aby + 10);std::cout << "│김씨! 다음 구역!│";
+	Object::gotoxy(abx + 2, aby + 11);std::cout << "│(특근수당 HOLD) │";
+	Object::gotoxy(abx + 2, aby + 12);std::cout << "└────────────────┘";
+}
 
 void BlockMapManager::drawCombo(int count) {
 	if (lastComboX != 0 && lastComboY != 0) {

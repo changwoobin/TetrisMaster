@@ -1,4 +1,5 @@
 #include "TetrisGame.h"
+#include "start.h"
 #include <conio.h>
 
 
@@ -48,8 +49,6 @@ int TetrisGame::play()
 		Object::changeColor(BLACK);
 		Object::gotoxy(77, 23);
 
-
-
 		/*keytemp = _getche();*/
 		/*keytemp = _getche();*/
 
@@ -79,7 +78,11 @@ int TetrisGame::play()
 		}
 		if ((GetAsyncKeyState(27) & 0x8000) || (GetAsyncKeyState('P') & 0x8000)) // ESC 또는 P (일시정지)
 		{
-			if (handlePauseMenu(manager) == 1) return 0; // 1(퇴근)이 반환되면 게임 종료
+			if (handlePauseMenu(manager) == 1) {
+				gameState.reset();
+				manager.reset();
+				return 0;
+			} // 1(퇴근)이 반환되면 게임 종료
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
@@ -90,8 +93,8 @@ int TetrisGame::play()
 
 		if (is_gameover == 1)
 		{
-			Object::gotoxy(0, 29);
-			return 1;
+			handleGameOver();			
+			is_gameover = 0;
 		}
 
 		Object::changeColor(BLACK);
@@ -107,6 +110,8 @@ int TetrisGame::play()
 	}
 	return 0;
 }
+
+
 
 int TetrisGame::multiplay()
 {
@@ -388,10 +393,8 @@ void TetrisGame::handleStageClear()
 {
 	if (Stage::data[level].clearLine <= gameState.getLines())
 	{
-		drawStageClear();
+		manager.drawStageClear();
 		Sleep(1500);
-
-		erasePopUp();
 
 		level++;
 		gameState.setLevel(level);
@@ -404,6 +407,22 @@ void TetrisGame::handleStageClear()
 		manager.showHoldBox();
 	}
 }
+
+void TetrisGame::handleGameOver()
+{
+	writeReprimand();
+	hardClearConsole();
+	gameState.reset();
+	manager.reset();
+
+	manager.showMap();
+	gameState.show();
+	manager.showNextBlock();
+	manager.showHoldBox();
+}
+
+
+
 void TetrisGame::scheduleNextFlip(int cur)
 {
 	int delay = 1333 + (rand() % 1334);
@@ -432,7 +451,6 @@ void TetrisGame::printAttackCounter(int attackCounter, int x, int y)
 	Object::gotoxy(x, y);
 	std::cout << "Attack : " << attackCounter;
 }
-
 void TetrisGame::drawStageClear() {
 	int abx = 5;
 	int aby = 1;
@@ -497,7 +515,7 @@ void TetrisGame::showWinner(int winner) {
 void TetrisGame::drawResultPopup(int abx, bool isWin) {
 
 	int evX = (abx % 2 == 0) ? abx : abx + 1;
-	int aby = 1; 
+	int aby = 1;
 
 	if (isWin) Object::changeColor(YELLOW); // 승자는 노란색 테두리
 	else Object::changeColor(RED);          // 패자는 빨간색 테두리

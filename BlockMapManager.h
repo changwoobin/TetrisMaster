@@ -29,6 +29,8 @@ class BlockMapManager
 public:
 	BlockMapManager(int abx = 5, int aby = 1);
 
+	void reset();
+
 	void showMap();
 	int addBlock();			// blocks 벡터에 block 추가
 	int startBlock();		// block 진행 시작
@@ -65,8 +67,6 @@ public:
 	void flipMap();
 	void addRandomLine();
 
-	void erasePopUp();
-	void drawPauseMenu();
 	void drawStageClear();
 	void drawCombo(int count);
 	void drawTrashBag();

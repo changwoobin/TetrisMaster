@@ -15,6 +15,8 @@ public:
 	GameState();
 	GameState(int level, int score, int lines, int abx = 5, int aby = 1);
 
+	void reset();
+
 	int getScore() const;
 	int getLines() const;
 	int getLevel() const;

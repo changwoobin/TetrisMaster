@@ -29,6 +29,7 @@ public:
 
 	int handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager = nullptr);
 	void handleStageClear();
+	void handleGameOver();
 	void drawStageClear();
 	void drawPauseMenu();
 	void erasePopUp();

@@ -11,6 +11,8 @@ private:
 public:
     Map(int abx = 5, int aby = 1);
 
+    void reset();
+
     void draw(int level);
     void setMap(int row, int col, int data);
 

@@ -29,5 +29,10 @@ public:
 
 	int handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager = nullptr);
 	void handleStageClear();
+	void drawStageClear();
+	void drawPauseMenu();
+	void erasePopUp();
+	void showWinner(int winner);
+	void drawResultPopup(int abx, bool isWin);
 };
 

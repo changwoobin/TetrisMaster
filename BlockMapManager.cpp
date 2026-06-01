@@ -412,29 +412,6 @@ void BlockMapManager::addRandomLine()
 	map.insertLine(19, line);
 }
 
-void BlockMapManager::drawPauseMenu() {
-	int evX = (abx % 2 == 0) ? abx : abx + 1; 
-
-	Object::changeColor(WHITE);
-	Object::gotoxy(evX + 2, aby + 7); std::cout << "┌─────────────────────────────────┐";
-	Object::gotoxy(evX + 2, aby + 8); std::cout << "│          휴  식  시  간         │";
-	Object::gotoxy(evX + 2, aby + 9); std::cout << "│                                 │";
-	Object::gotoxy(evX + 2, aby + 10);std::cout << "│  [R] 다시  일하러  가자!        │";
-	Object::gotoxy(evX + 2, aby + 11);std::cout << "│                                 │";
-	Object::gotoxy(evX + 2, aby + 12);std::cout << "│  [Q] 정말  퇴근하시겠습니까?    │";
-	Object::gotoxy(evX + 2, aby + 13);std::cout << "└─────────────────────────────────┘";
-}
-void BlockMapManager::drawStageClear() {
-	int evX = (abx % 2 == 0) ? abx : abx + 1;
-
-	Object::changeColor(YELLOW);
-	Object::gotoxy(evX + 2, aby + 7); std::cout << "┌────────────────────────┐";
-	Object::gotoxy(evX + 2, aby + 8); std::cout << "│    일일 할당량 달성    │";
-	Object::gotoxy(evX + 2, aby + 9); std::cout << "│                        │";
-	Object::gotoxy(evX + 2, aby + 10);std::cout << "│    김씨! 다음 구역!    │";
-	Object::gotoxy(evX + 2, aby + 11);std::cout << "│   (특근수당 HOLD +1)   │";
-	Object::gotoxy(evX + 2, aby + 12);std::cout << "└────────────────────────┘";
-}
 
 void BlockMapManager::drawCombo(int count) {
 	if (lastComboX != 0 && lastComboY != 0) {
@@ -486,14 +463,5 @@ void BlockMapManager::drawTrashBag() {
 		Object::gotoxy(tx, ty + 1); std::cout << "  /~~~~\\  ";
 		Object::gotoxy(tx, ty + 2); std::cout << " /      \\ ";
 		Object::gotoxy(tx, ty + 3); std::cout << " \\______/ ";
-	}
-}
-
-void BlockMapManager::erasePopUp() {
-	int evX = (abx % 2 == 0) ? abx : abx + 1;
-
-	for (int i = 0; i < 7; i++) {
-		Object::gotoxy(evX + 2, aby + 7 + i);
-		std::cout << "                                        "; 
 	}
 }

@@ -125,6 +125,7 @@ int TetrisGame::multiplay()
 	bool prev_Slash = false;
 	BlockMapManager guestManager(100, 1);
 	GameState guestGameState(0, 0, 0, 100, 1);
+	guestGameState.setLevel(10);
 
 	system("mode con: cols=200 lines=30");
 
@@ -292,15 +293,38 @@ int TetrisGame::multiplay()
 			}
 		}
 
-		if (is_gameover == 1)
+		if (is_gameover == 1 || is_guestGameover == 1)
 		{
+			// 누가 패배했는지에 따라 최종 승자 계산 (1=1P 승리, 2=2P 승리, 0=무승부)
+			int winner = 0;
+			if (is_gameover == 1 && is_guestGameover == 1) winner = 0;
+			else if (is_gameover == 1) winner = 2;
+			else winner = 1;
+
+			// ① [수정됨] TetrisGame 본체 함수를 직접 호출하여 각자 자리에 도장 쾅!
+			// 1P 영역은 X=5 베이스로, 2P 영역은 X=100 베이스로 그려지도록 매개변수 전달
+			if (winner == 2) {
+				drawResultPopup(5, false);     // 1P 자리에 LOSE 출력
+				drawResultPopup(100, true);    // 2P 자리에 WIN 출력
+			}
+			else if (winner == 1) {
+				drawResultPopup(5, true);      // 1P 자리에 WIN 출력
+				drawResultPopup(100, false);   // 2P 자리에 LOSE 출력
+			}
+
+			// ② 화면 정중앙(X=50)에 최종 승자 발표 대형 팝업 출력
+			showWinner(winner);
+
+			// ③ 결과창 진입 시 버튼 연타로 화면이 휙 넘어가 버리는 현상 방지 안전장치
+			while (_kbhit()) _getch(); // 기존 키 입력 버퍼 찌꺼기 싹 비우기
+			Sleep(500);               // 결과창을 인지할 수 있도록 최소 0.5초 강제 대기
+
+			// ④ "아무 키나 누르세요..." 무한 대기 구현
+			while (!_kbhit()) Sleep(30);
+			while (_kbhit()) _getch(); // 넘어가기 직전 키 찌꺼기 최종 정리
+
 			Object::gotoxy(0, 29);
-			return 1;
-		}
-		if (is_guestGameover == 1)
-		{
-			Object::gotoxy(0, 29);
-			return 2;
+			return winner; // 최종 승자 번호를 반환하며 멀티플레이 종료
 		}
 
 		Object::changeColor(BLACK);
@@ -325,7 +349,7 @@ int TetrisGame::multiplay()
 
 int TetrisGame::handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager)
 {
-	p1Manager.drawPauseMenu(); // 팝업 띄우기
+	drawPauseMenu(); // 팝업 띄우기
 	Sleep(200);
 
 	while (true) {
@@ -345,7 +369,7 @@ int TetrisGame::handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2M
 
 	Sleep(200);
 
-	p1Manager.erasePopUp();
+	erasePopUp();
 
 	// 팝업이 닫히면 다시 맵 복구
 	p1Manager.showMap();
@@ -364,10 +388,10 @@ void TetrisGame::handleStageClear()
 {
 	if (Stage::data[level].clearLine <= gameState.getLines())
 	{
-		manager.drawStageClear();
+		drawStageClear();
 		Sleep(1500);
 
-		manager.erasePopUp();
+		erasePopUp();
 
 		level++;
 		gameState.setLevel(level);
@@ -407,4 +431,88 @@ void TetrisGame::printAttackCounter(int attackCounter, int x, int y)
 	Object::changeColor(WHITE);
 	Object::gotoxy(x, y);
 	std::cout << "Attack : " << attackCounter;
+}
+
+void TetrisGame::drawStageClear() {
+	int abx = 5;
+	int aby = 1;
+	int evX = (abx % 2 == 0) ? abx : abx + 1;
+
+	Object::changeColor(YELLOW);
+	Object::gotoxy(evX + 2, aby + 7); std::cout << "┌────────────────────────┐";
+	Object::gotoxy(evX + 2, aby + 8); std::cout << "│    일일 할당량 달성    │";
+	Object::gotoxy(evX + 2, aby + 9); std::cout << "│                        │";
+	Object::gotoxy(evX + 2, aby + 10);std::cout << "│    김씨! 다음 구역!    │";
+	Object::gotoxy(evX + 2, aby + 11);std::cout << "│   (특근수당 HOLD +1)   │";
+	Object::gotoxy(evX + 2, aby + 12);std::cout << "└────────────────────────┘";
+}
+
+void TetrisGame::drawPauseMenu() {
+	int abx = 5;
+	int aby = 1;
+	int evX = (abx % 2 == 0) ? abx : abx + 1;
+
+	Object::changeColor(WHITE);
+	Object::gotoxy(evX + 2, aby + 7); std::cout << "┌─────────────────────────────────┐";
+	Object::gotoxy(evX + 2, aby + 8); std::cout << "│          휴  식  시  간         │";
+	Object::gotoxy(evX + 2, aby + 9); std::cout << "│                                 │";
+	Object::gotoxy(evX + 2, aby + 10);std::cout << "│  [R] 다시  일하러  가자!        │";
+	Object::gotoxy(evX + 2, aby + 11);std::cout << "│                                 │";
+	Object::gotoxy(evX + 2, aby + 12);std::cout << "│  [Q] 정말  퇴근하시겠습니까?    │";
+	Object::gotoxy(evX + 2, aby + 13);std::cout << "└─────────────────────────────────┘";
+}
+
+void TetrisGame::erasePopUp() {
+	int abx = 5;
+	int aby = 1;
+	int evX = (abx % 2 == 0) ? abx : abx + 1;
+
+	for (int i = 0; i < 7; i++) {
+		Object::gotoxy(evX + 2, aby + 7 + i);
+		std::cout << "                                        ";
+	}
+}
+
+void TetrisGame::showWinner(int winner) {
+	int evX = 44; // 1P와 2P 사이 정중앙 (짝수 좌표)
+	int aby = 10;
+
+	Object::changeColor(WHITE);
+	Object::gotoxy(evX, aby + 0); std::cout << "┌────────────────────────────────┐";
+	Object::gotoxy(evX, aby + 1); std::cout << "│                                │";
+	Object::gotoxy(evX, aby + 2); std::cout << "│        승 자 발 표 !           │";
+	Object::gotoxy(evX, aby + 3); std::cout << "│                                │";
+
+
+	Object::gotoxy(evX, aby + 4);
+	if (winner == 1)      std::cout << "│     ★ 1P (왼쪽) 승리! ★      │";
+	else if (winner == 2) std::cout << "│     ★ 2P (오른쪽) 승리! ★    │";
+	else                  std::cout << "│         무  승  부             │";
+
+	Object::gotoxy(evX, aby + 5); std::cout << "│                                │";
+	Object::gotoxy(evX, aby + 6); std::cout << "│    아무 키나 눌러 퇴근하세요   │";
+	Object::gotoxy(evX, aby + 7); std::cout << "└────────────────────────────────┘";
+}
+
+void TetrisGame::drawResultPopup(int abx, bool isWin) {
+
+	int evX = (abx % 2 == 0) ? abx : abx + 1;
+	int aby = 1; 
+
+	if (isWin) Object::changeColor(YELLOW); // 승자는 노란색 테두리
+	else Object::changeColor(RED);          // 패자는 빨간색 테두리
+
+	Object::gotoxy(evX + 2, aby + 7); std::cout << "┌──────────────────────────┐";
+	if (isWin) {
+		Object::gotoxy(evX + 2, aby + 8); std::cout << "│      승  리  (WIN)       │";
+		Object::gotoxy(evX + 2, aby + 9); std::cout << "│                          │";
+		Object::gotoxy(evX + 2, aby + 10);std::cout << "│     오늘의  우수사원!    │";
+	}
+	else {
+		Object::gotoxy(evX + 2, aby + 8); std::cout << "│      패  배  (LOSE)      │";
+		Object::gotoxy(evX + 2, aby + 9); std::cout << "│                          │";
+		Object::gotoxy(evX + 2, aby + 10);std::cout << "│     야근  확정입니다..   │";
+	}
+	Object::gotoxy(evX + 2, aby + 11);std::cout << "│                          │";
+	Object::gotoxy(evX + 2, aby + 12);std::cout << "└──────────────────────────┘";
 }

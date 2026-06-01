@@ -7,9 +7,9 @@ struct StageData {
 };
 
 namespace Stage {
-	constexpr StageData data[10] = {
+	constexpr StageData data[11] = {
 		{40, 20, 1},
-		{38, 18, 1},
+		{38, 18, 20},
 		{35, 18, 20},
 		{30, 17, 20},
 		{25, 16, 20},
@@ -17,6 +17,7 @@ namespace Stage {
 		{15, 14, 20},
 		{10, 13, 20},
 		{6, 12, 20},
-		{4, 11, 9999}
+		{4, 11, 9999},
+		{ 30, 11, 9999 }
 	};
 }

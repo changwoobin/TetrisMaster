@@ -27,17 +27,15 @@ void GameState::setLevel(int level) { this->level = level; }
 int GameState::show() {
 	changeColor(GRAY);
 
-	if (!isTextPrinted) {
-		moveCursor(15, 14);
-		cout << "STAGE";
+	moveCursor(15, 14);
+	cout << "STAGE";
 
-		moveCursor(15, 16);
-		cout << "SCORE";
+	moveCursor(15, 16);
+	cout << "SCORE";
 
-		moveCursor(15, 19);
-		cout << "LINES";
-		isTextPrinted = true;
-	}
+	moveCursor(15, 19);
+	cout << "LINES";
+	isTextPrinted = true;
 
 	moveCursor(36/2, 14);
 	cout << level + 1;

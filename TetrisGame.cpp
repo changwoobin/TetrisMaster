@@ -22,6 +22,7 @@ int TetrisGame::play()
 	char keytemp;
 	bool prev_UP = false;
 	bool prev_C = false;
+	bool prev_Space = false;
 
 
 	manager.showMap();
@@ -68,7 +69,7 @@ int TetrisGame::play()
 		{
 			is_gameover = manager.moveDown(gameState);
 		}
-		if (GetAsyncKeyState(KEY_SPACE) & 0x8000) // 스페이스바 (Hard Drop)
+		if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && !prev_Space) // 스페이스바 (Hard Drop)
 		{
 			is_gameover = manager.hardDrop(gameState);
 		}
@@ -96,6 +97,7 @@ int TetrisGame::play()
 		Object::changeColor(BLACK);
 		prev_UP = (GetAsyncKeyState(VK_UP) & 0x8000);
 		prev_C = (GetAsyncKeyState('C') & 0x8000);
+		prev_Space = GetAsyncKeyState(VK_SPACE) & 0x8000;
 
 		manager.drawTrashBag();
 

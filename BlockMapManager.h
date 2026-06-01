@@ -65,7 +65,7 @@ public:
 	void flipMap();
 	void addRandomLine();
 
-	void erasePauseMenu();
+	void erasePopUp();
 	void drawPauseMenu();
 	void drawStageClear();
 	void drawCombo(int count);

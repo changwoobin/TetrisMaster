@@ -345,7 +345,7 @@ int TetrisGame::handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2M
 
 	Sleep(200);
 
-	p1Manager.erasePauseMenu();
+	p1Manager.erasePopUp();
 
 	// ÆË¾÷ÀÌ ´ÝÈ÷¸é ´Ù½Ã ¸Ê º¹±¸
 	p1Manager.showMap();
@@ -366,6 +366,8 @@ void TetrisGame::handleStageClear()
 	{
 		manager.drawStageClear();
 		Sleep(1500);
+
+		manager.erasePopUp();
 
 		level++;
 		gameState.setLevel(level);

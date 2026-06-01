@@ -8,8 +8,8 @@ struct StageData {
 
 namespace Stage {
 	constexpr StageData data[10] = {
-		{40, 20, 20},
-		{38, 18, 20},
+		{40, 20, 1},
+		{38, 18, 1},
 		{35, 18, 20},
 		{30, 17, 20},
 		{25, 16, 20},

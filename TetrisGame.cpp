@@ -127,7 +127,7 @@ int TetrisGame::multiplay()
 	bool prev_Period = false;
 	bool prev_N = false;
 	bool prev_Slash = false;
-	BlockMapManager guestManager(100, 1);
+	GameManager guestManager(100, 1);
 	GameState guestGameState(0, 0, 0, 100, 1);
 	guestGameState.setLevel(10);
 
@@ -364,7 +364,7 @@ int TetrisGame::multiplay()
 	return 0;
 }
 
-int TetrisGame::handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager)
+int TetrisGame::handlePauseMenu(GameManager& p1Manager, GameManager* p2Manager)
 {
 	drawPauseMenu(); // ÆË¾÷ ¶ç¿ì±â
 	Sleep(200);
@@ -446,7 +446,7 @@ void TetrisGame::scheduleNextRandom(int cur)
 	nextRandomTick = cur + delay;
 }
 
-void TetrisGame::addLineAttack_to_Opponent(BlockMapManager& m, int lines)
+void TetrisGame::addLineAttack_to_Opponent(GameManager& m, int lines)
 {
 	for (int i = 0; i < lines; i++)
 	{

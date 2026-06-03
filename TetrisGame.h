@@ -1,6 +1,6 @@
 #pragma once
 #include "GameState.h"
-#include "BlockMapManager.h"
+#include "GameManager.h"
 #include "Stage.h"
 
 #define EXT_KEY			0xffffffe0	//확장키 인식값 
@@ -13,7 +13,7 @@
 class TetrisGame
 {
 	GameState gameState;
-	BlockMapManager manager;
+	GameManager manager;
 	int level;
 	int nextFlipTick;
 	int nextRandomTick;
@@ -24,10 +24,10 @@ public:
 	int multiplay();
 	void scheduleNextFlip(int cur);
 	void scheduleNextRandom(int cur);
-	void addLineAttack_to_Opponent(BlockMapManager& m, int lines);
+	void addLineAttack_to_Opponent(GameManager& m, int lines);
 	void printAttackCounter(int attackCounter, int x, int y);
 
-	int handlePauseMenu(BlockMapManager& p1Manager, BlockMapManager* p2Manager = nullptr);
+	int handlePauseMenu(GameManager& p1Manager, GameManager* p2Manager = nullptr);
 	void handleStageClear();
 	void handleGameOver();
 	void drawStageClear();

@@ -1,5 +1,5 @@
 #include "GameState.h"
-#include "BlockMapManager.h"
+#include "GameManager.h"
 #include "Block.h"
 #include "TetrisGame.h"
 #include "ConsoleRenderer.h"

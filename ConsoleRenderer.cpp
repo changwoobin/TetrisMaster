@@ -257,6 +257,7 @@ void drawTitleAndMenu(const vector<string>& items, int sel) {
     endFrame();                            // 아래쪽 잔상 제거 + flush
 }
 
+
 // ===================================================================
 //  3) 키 입력 (방향키) - _getch()
 // ===================================================================
@@ -466,7 +467,7 @@ void writeReprimand() {
     putBlank();
 
     string description1 = "※ 업무 태만 발생 - 시말서 작성 ※";
-    string description2 = " 블록이 천장에 닿았습니다. 본부는 경위 보고를 요구합니다.";
+    string description2 = "블록이 천장에 닿았습니다. 본부는 경위 보고를 요구합니다.";
     putLine(pad((SCREEN_WIDTH - dispWidth(description1)) / 2) + "\033[1;31m" + description1);
     putBlank();
     putLine(pad((SCREEN_WIDTH - dispWidth(description2)) / 2) + "\033[1;90m" + description2);

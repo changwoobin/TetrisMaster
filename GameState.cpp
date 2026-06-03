@@ -1,4 +1,5 @@
 #include "GameState.h"
+#include "Stage.h"
 
 using namespace std;
 
@@ -54,7 +55,7 @@ int GameState::show() {
 	cout << setw(10) << score;
 
 	moveCursor(15, 20);
-	cout << setw(10) << 20 - lines;
+	cout << setw(10) << Stage::data[level].clearLine - lines;;
 
 	return 0;
 }

@@ -1,7 +1,6 @@
 #include "TetrisGame.h"
-#include "start.h"
+#include "ConsoleRenderer.h"
 #include <conio.h>
-
 
 TetrisGame::TetrisGame() : gameState(0, 0, 0, 5, 1), manager(5, 1)
 {
@@ -31,7 +30,7 @@ int TetrisGame::play()
 	manager.showHoldBox();
 	manager.startBlock();
 	gameState.show();
-	
+	cout << "\033[?25l";
 	for (i = 1; 1; i++)
 	{
 		if (i >= nextFlipTick) {
@@ -40,7 +39,7 @@ int TetrisGame::play()
 			continue;
 		}
 
-		if (i >= nextRandomTick) {
+		if (level > 0 && i >= nextRandomTick) {
 			manager.addRandomLine();
 			scheduleNextRandom(i);
 			manager.showMap();
@@ -82,7 +81,7 @@ int TetrisGame::play()
 				gameState.reset();
 				manager.reset();
 				return 0;
-			} // 1(퇴근)이 반환되면 게임 종료
+			} 
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
@@ -147,6 +146,7 @@ int TetrisGame::multiplay()
 	guestGameState.show();
 	printAttackCounter(attackCounter, 5, 23);
 	printAttackCounter(guestAttackCounter, 100, 23);
+	cout << "\033[?25l";
 	for (i = 1; 1; i++)
 	{
 		/*if (i >= nextFlipTick) {
@@ -282,7 +282,13 @@ int TetrisGame::multiplay()
 
 		if ((GetAsyncKeyState(27) & 0x8000) || (GetAsyncKeyState('P') & 0x8000)) // ESC 또는 P (일시정지)
 		{
-			if (handlePauseMenu(manager, &guestManager) == 1) return 0;
+			if (handlePauseMenu(manager, &guestManager) == 1) { 
+				manager.reset();
+				gameState.reset();
+				guestManager.reset();
+				guestGameState.reset();
+				return 0; 
+			}
 		}
 		if (i % Stage::data[level].speed == 0)
 		{
@@ -329,6 +335,12 @@ int TetrisGame::multiplay()
 			while (_kbhit()) _getch(); // 넘어가기 직전 키 찌꺼기 최종 정리
 
 			Object::gotoxy(0, 29);
+
+			manager.reset();
+			gameState.reset();
+			guestManager.reset();
+			guestGameState.reset();
+
 			return winner; // 최종 승자 번호를 반환하며 멀티플레이 종료
 		}
 
@@ -419,9 +431,8 @@ void TetrisGame::handleGameOver()
 	gameState.show();
 	manager.showNextBlock();
 	manager.showHoldBox();
+	manager.startBlock();
 }
-
-
 
 void TetrisGame::scheduleNextFlip(int cur)
 {
@@ -451,6 +462,7 @@ void TetrisGame::printAttackCounter(int attackCounter, int x, int y)
 	Object::gotoxy(x, y);
 	std::cout << "Attack : " << attackCounter;
 }
+
 void TetrisGame::drawStageClear() {
 	int abx = 5;
 	int aby = 1;

@@ -9,6 +9,9 @@ BlockMapManager::BlockMapManager(int abx, int aby)
 void BlockMapManager::reset()
 {
 	map.reset();
+	blocksStorage.reset();
+
+	curBlock = -1;
 	holdShape = -1;
 	remainHolds = 2;
 	comboCount = 0;

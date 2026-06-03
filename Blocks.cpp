@@ -3,10 +3,24 @@
 
 int Blocks::blocksCount = 0;
 
+Blocks::~Blocks()
+{
+    for (auto *block : blocks) {
+        delete block;
+    }
+}
+
 Blocks& Blocks::getInstance()
 {
 	static Blocks instance;
 	return instance;
+}
+
+void Blocks::reset()
+{
+    for (auto* row : blocks) {
+        row->clear();
+    }
 }
 
 void Blocks::push_back(Block& block)

@@ -15,6 +15,8 @@ class GameManager
 
 	Map map;
 
+	bool isMulti;					// 멀티 플레이 여부
+
 	int level;
 	int curBlock;					// 현재	진행 중인 블록의 인덱스
 	int holdShape;					// hold 블록 모양
@@ -27,9 +29,13 @@ class GameManager
 	int trashAnimTick;				//애니메이션 용 변수
 
 public:
-	GameManager(int abx = 5, int aby = 1);
+	GameManager(int abx = 5, int aby = 1, bool isMulti = false);
 
 	void reset();
+
+	bool isMultiPlay() const;
+	void setMulti();
+	void setSingle();
 
 	void showMap();
 	int addBlock();			// blocks 벡터에 block 추가

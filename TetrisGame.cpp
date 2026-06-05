@@ -24,7 +24,7 @@ int TetrisGame::play()
 	bool prev_C = false;
 	bool prev_Space = false;
 
-
+	manager.setSingle();
 	manager.showMap();
 	manager.showNextBlock();
 	manager.showHoldBox();
@@ -127,7 +127,10 @@ int TetrisGame::multiplay()
 	bool prev_Period = false;
 	bool prev_N = false;
 	bool prev_Slash = false;
-	GameManager guestManager(100, 1);
+
+	manager.setMulti();
+
+	GameManager guestManager(100, 1, true);
 	GameState guestGameState(0, 0, 0, 100, 1);
 	guestGameState.setLevel(10);
 
@@ -137,13 +140,11 @@ int TetrisGame::multiplay()
 	manager.startBlock();
 	manager.showNextBlock();
 	manager.showHoldBox();
-	gameState.show();
-
+	
 	guestManager.showMap();
 	guestManager.startBlock();
 	guestManager.showNextBlock();
 	guestManager.showHoldBox();
-	guestGameState.show();
 	printAttackCounter(attackCounter, 5, 23);
 	printAttackCounter(guestAttackCounter, 100, 23);
 	cout << "\033[?25l";

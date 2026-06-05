@@ -2,8 +2,8 @@
 
 #include <conio.h>
 
-GameManager::GameManager(int abx, int aby)
-	: abx(abx), aby(aby), curBlock(-1), map(abx, aby), holdShape(-1), remainHolds(2), comboCount(0), level(0), blocksStorage(Blocks::getInstance()), blocks(Blocks::getInstance().getBlocks()) {
+GameManager::GameManager(int abx, int aby, bool isMulti)
+	: abx(abx), aby(aby), curBlock(-1), map(abx, aby), holdShape(-1), remainHolds(2), comboCount(0), level(0), blocksStorage(Blocks::getInstance()), blocks(Blocks::getInstance().getBlocks()), isMulti(isMulti) {
 }
 
 void GameManager::reset()
@@ -16,6 +16,21 @@ void GameManager::reset()
 	remainHolds = 2;
 	comboCount = 0;
 	level = 0;
+}
+
+bool GameManager::isMultiPlay() const
+{
+	return isMulti;
+}
+
+void GameManager::setMulti()
+{
+	isMulti = true;
+}
+
+void GameManager::setSingle()
+{
+	isMulti = false;
 }
 
 void GameManager::showMap() {
@@ -146,7 +161,10 @@ int GameManager::checkFullLine(GameState& gameState) {
 		int curScore = gameState.getScore();
 		gameState.addLines(clearedLinesThisTurn);
 		gameState.setScore(curScore + finalScore);
-		gameState.show();
+
+		if (!isMulti) {
+			gameState.show();
+		}
 	}
 	else {
 		comboCount = 0;
@@ -370,7 +388,7 @@ void GameManager::showHoldBox() {
 
 	if (holdShape != -1) {
 		Block hBlock(holdShape, abx, aby);
-		hBlock.setCord((holdBoxX + 2) / 2, holdBoxY + 1);
+		hBlock.setCord((holdBoxX + 3) / 2, holdBoxY + 1);
 		hBlock.show();
 	}
 }
